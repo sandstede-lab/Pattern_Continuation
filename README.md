@@ -20,7 +20,12 @@ MATLAB
 git clone https://github.com/WenjunZHAOwO/Pattern_Continuation.git
 ```
 
-## Example usage
+## Example usage in MATLAB
+
+```
+Cd BifurcationTracing
+Main_adapt_bisection
+```
 
 
 
