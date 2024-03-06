@@ -14,6 +14,12 @@ This software computes pattern statistics in spatially extended systems and uses
 
 MATLAB
 
+## Source
+
+```
+git clone https://github.com/WenjunZHAOwO/Pattern_Continuation.git
+```
+
 ## Example usage
 
 
