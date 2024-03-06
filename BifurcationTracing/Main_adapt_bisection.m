@@ -4,6 +4,7 @@ clear all;
 close all;
 rng(5);
 
+path(path,'../DataGenerator/Reaction_Diffusion');
 
 dist = 'num';% distance metric to be used. Alternative: 'roundness'
 

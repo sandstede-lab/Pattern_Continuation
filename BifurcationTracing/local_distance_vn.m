@@ -70,7 +70,7 @@ end
 
 if length(feature_bp_all) == 0
     for j = 1:Rep
-        cd ../DataGenerator/Reaction_Diffusion
+%         cd ../DataGenerator/Reaction_Diffusion
             switch model
                 case 'Brusselator'
                     [Ubp{j},Vbp{j}] = Brusselator(a+dn(1),b+dn(2),viz, Nx,t_max);
@@ -81,7 +81,7 @@ if length(feature_bp_all) == 0
                 case 'Schnakenberg'
                     Ubp{j}= Schnakenberg(a+dn(1),b+dn(2));
             end
-        cd ../../BifurcationTracing
+%         cd ../../BifurcationTracing
         flag =  (max(Ubp{j}(:)) - min(Ubp{j}(:)) > 1E-1);
         if steady == 0 && flag
             idx = find(Ubp{j} > quantile(Ubp{j}(:), 0.7));
@@ -169,7 +169,7 @@ end
 % fprintf('Ubp done\n')
 if length(feature_bm_all) == 0
     for j = 1:Rep
-        cd ../DataGenerator/Reaction_Diffusion
+%         cd ../DataGenerator/Reaction_Diffusion
             switch model
                 case 'Brusselator'
                     [Ubm{j},Vbm{j}] = Brusselator(a-dn(1),b-dn(2),viz, Nx,t_max);%, Ubm{j},Vbm{j});
@@ -180,7 +180,7 @@ if length(feature_bm_all) == 0
                 case 'Schnakenberg'
                     Ubm{j}= Schnakenberg(a-dn(1),b-dn(2));
             end
-        cd ../../BifurcationTracing
+%         cd ../../BifurcationTracing
         flag =  (max(Ubm{j}(:)) - min(Ubm{j}(:)) > 1E-1);
         if steady==0 && flag
     
