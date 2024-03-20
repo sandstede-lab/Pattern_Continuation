@@ -37,7 +37,7 @@ Main_adapt_bisection
 ```
 
 The following file contains examples for spiral waves:
-````
+```
 cd BifurcationTracing
 Main_Barkley_bisection
 ```
@@ -46,11 +46,16 @@ Note that users may need to create their own Mex files by typing `make' in comma
 
 # To reproduce figures in paper
 
-The following file shows how to display results together with solutions of IVP problems in parameter space for Brusselator
+The following file shows how to display results together with solutions of IVP problems in parameter space for Brusselator:
 
 ```
 cd DisplayResults
 overlay_simulations_Brusselator
+```
+Visualization for Barkley:
+```
+cd DisplayResults
+overlay_simulations_Barkley
 ```
 
 

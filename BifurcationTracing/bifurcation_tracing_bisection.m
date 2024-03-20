@@ -172,30 +172,23 @@ while L_current < L
     end
 %     
     
-    
-    
-    
-    
-%     val_all(1,i+2) = val_c1; 
-%     val_all(2,i+2) = val_c2; 
-%     p_history(:,i+2) = p_current';
-%     p_history_all{1}(:,i+2) = p_c1';
-%     p_history_all{2}(:,i+2) = p_c2';
-%     
-%     p_history_all_sim{1}(:,i+2) = p_c1' + step_size/2*direction_norm';
-%     p_history_all_sim{2}(:,i+2) = p_c1' - step_size/2*direction_norm';
-%     p_history_all_sim{3}(:,i+2) = p_c2' - step_size/2*direction_norm';
-%     
-%     val_feat_all_sim(1,i+2) = mean(cat(2,feature_bp_all{1}));
-%     val_feat_all_sim(2,i+2) = mean(cat(2,feature_b0_all{1}));
-%     val_feat_all_sim(3,i+2) = mean(cat(2,feature_bm_all{1}));
-    
+  
     
     % Update direction vectors
     direction = p_current - p_prior;
     direction = direction/norm(direction);
     direction_norm = [-direction(2), direction(1)];
     
+    
+    if i>5 && (  (max( metric_history_new ) <0.5) || (min( metric_history_new >-0.5) )) && strcmp(dist,'line_fit')
+        L_current = 2*L;
+    end
+    if i>5 && ( ( max( metric_history_new ) <0.5 )||( min( metric_history_new) >0.5 )) && strcmp(dist,'ring_fit')
+        L_current = 2*L;
+    end
+    if i>5 && ( ( max( metric_history_new ) <0.5 )||( min( metric_history_new) >0.5 )) && ( strcmp(dist,'steady') || strcmp(dist,'turbulence')  || strcmp(dist,'turbulence2') )
+        L_current = 2*L;
+    end
     
     
     
