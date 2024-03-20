@@ -6,7 +6,7 @@ rng(5);
 
 path(path,'../DataGenerator/Reaction_Diffusion');
 
-dist = 'num';% distance metric to be used. Alternative: 'roundness'
+dist = 'roundness';% distance metric to be used. Alternative: 'roundness'
 
 interp = 1; % bifurcation tracing with interpolation to improve smoothness
 adapt = 1; % arc length per step is adaptive
@@ -16,13 +16,28 @@ sets = 'pos';
 save_flag = 0; % results will be saved
 
 model = 'Brusselator'; % name of IVP solver. Alternative: 'SH','Gray_Scott','Schnakenberg'
+% model = 'SH_1D'
 
-steady = 1; % trace out when homogeneous solution occurs
+steady = 0; % trace out when homogeneous solution occurs
 
 max_bisect = 2; % Number of bisection allowed
         
     
 switch model
+    
+    case 'SH_1D'
+        
+        max_step_arc_length = 0.02;
+        min_step_arc_length = max_step_arc_length;
+        L = 1; % Arc length in total
+        
+        if steady == 0
+            init1 = [0.3,1.9]; init2 = [0.3,2];
+        else
+
+            init1 = [0.36,1.7]; init2 = [0.36,1.8];
+        end
+    
     case 'Brusselator'
         max_step_arc_length = 0.5;
         min_step_arc_length = max_step_arc_length/2;
@@ -53,6 +68,7 @@ switch model
             init1 = [0.0,0]; init2 = [0.0,0.1];
             init1 = [0.0,0.3]; init2 = [0.0,0.4];
         end
+        
     
 
     case 'GS'
@@ -84,7 +100,7 @@ switch model
 
 end
 
-linestyles = {'o-', '*--', 'x:','^-.'};
+% linestyles = {'o-', '*--', 'x:','^-.'};
 
   
             
@@ -96,7 +112,7 @@ linestyles = {'o-', '*--', 'x:','^-.'};
 
 figure;
 %                 figure(j);
-plot(p_history(1,:), p_history(2,:), linestyles , 'linewidth',2);
+plot(p_history(1,:), p_history(2,:), 'o-' , 'linewidth',2);
 legend()
 hold on;
 

@@ -52,6 +52,8 @@ b(1) = init1(2);
 a(2) = init2(1);
 b(2) = init2(2);
 
+alpha = [];
+max_count = 1;
 step_size = max_step_arc_length;
 
 % 2 initial points for transition curve
@@ -81,12 +83,14 @@ switch model
         alpha = 0.01;
         max_count = 5;
         
-    case 'Oregonator'
-        alpha = 1.5;
-        max_count = 5;
+    
     case 'Schnakenberg'
         alpha = 0.1;
         max_count = 10;
+    case 'SH_1D'
+        alpha = [];
+        max_count = 1;
+   
 end
 
 if steady
@@ -151,7 +155,7 @@ while L_current < L
     
     
     
-    [p_current,counts(i),p_history_new, metric_history_new] = bisect_significant_interval(model, p_c1, p_c2, dn, max_bisect, alpha,dist,t_max,sets,steady, interp, mode);
+    [p_current,counts(i),p_history_new, metric_history_new] = bisect_significant_interval(model, p_c1, p_c2, dn, max_bisect, alpha,max_count, dist,t_max,sets,steady, interp, mode);
     p_history_all = [p_history_all, p_history_new];
     metric_history_all = [metric_history_all, metric_history_new];
     p_history(:,i+2) = p_current';
@@ -225,16 +229,36 @@ while L_current < L
                 ylabel('f')
                 xlabel('k')
                 
-            case 'Oregonator'
-                xlim([0.64,1.2]);
-                ylim([0.4,2]);
-                xlabel('f')
-                ylabel('\epsilon')
+            case 'SH_1D'
+                xlim([0,1.2]);
+                ylim([1.7,3]);
+                xlabel('\mu')
+                ylabel('\nu')
             case 'Schnakenberg'
                 xlim([4.5,13]);
                 ylim([4.5,7.5]);
                 xlabel('a')
                 ylabel('b')
+                
+                
+            case 'Barkley'
+
+                ylim([0.01,0.13])
+                xlim([0.25,0.9])
+                xlabel('a')
+                ylabel('b')
+            case 'Bar-Eiswirth'
+                xlim([0.0,0.15])
+                ylim([0.04,0.26])
+                xlabel('a')
+                ylabel('\epsilon')
+            case 'Rossler'
+                xlim([2.5,4])
+                ylim([0.16,0.26])
+                xlabel('c')
+                ylabel('a')
+
+        end
         end
         title(['i=',num2str(i)]);
     

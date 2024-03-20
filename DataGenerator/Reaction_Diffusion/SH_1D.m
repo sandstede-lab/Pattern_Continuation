@@ -33,7 +33,7 @@ ETD = (exp(LU*dt)-1)./LU;               % ETD1 coeffs of linear operator
 
 uT = fft(u);                           % Time step done in Fourier space
 
-figure(1)
+
 for t=0:dt:T                           % evolve via ETD  method
 	f = nu*u.^2 - u.^3;                 % nonlinear RHS
     
@@ -44,6 +44,7 @@ for t=0:dt:T                           % evolve via ETD  method
     
 	if max(max(abs(u)))>100; return; end;
     if viz
+        figure(1)
         plot(x,u); ylabel('u'); xlabel('x'); drawnow;
     end
     

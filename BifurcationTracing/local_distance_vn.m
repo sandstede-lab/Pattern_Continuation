@@ -42,20 +42,23 @@ switch model
         [X,Y] = meshgrid( linspace(0,50,Nx), linspace(0,50,Nx));
         D = 50;
         %alpha = 1.2;
+        X = X(:); Y = Y(:);
     case 'SH'
         [X,Y] = meshgrid( linspace(0,16*pi,128), linspace(0,16*pi,128));
         D = 16*pi;
-        %alpha = 0.5;
+        X = X(:); Y = Y(:);
+%     case 'SH_1D'
+        
     case 'GS'
         [X,Y] = meshgrid( linspace(0,2.5,200), linspace(0,2.5,200));
         D = 2.5;
-    
+        X = X(:); Y = Y(:);
     case 'Schnakenberg'
         D = 4;
         [X,Y] = meshgrid( linspace(0,D,80), linspace(0,D,80));
-        
+        X = X(:); Y = Y(:);
 end
-X = X(:); Y = Y(:);
+% X = X(:); Y = Y(:);
 
 viz = false;
 
@@ -76,6 +79,8 @@ if length(feature_bp_all) == 0
                     [Ubp{j},Vbp{j}] = Brusselator(a+dn(1),b+dn(2),viz, Nx,t_max);
                 case 'SH'
                     Ubp{j}= SH_2D(a+dn(1),b+dn(2));
+                case 'SH_1D'
+                    Ubp{j}= SH_1D(a+dn(1),b+dn(2));
                 case 'GS'
                     Ubp{j}= Gray_Scott(a+dn(1),b+dn(2));
                 case 'Schnakenberg'
@@ -83,30 +88,43 @@ if length(feature_bp_all) == 0
             end
 %         cd ../../BifurcationTracing
         flag =  (max(Ubp{j}(:)) - min(Ubp{j}(:)) > 1E-1);
-        if steady == 0 && flag
-            idx = find(Ubp{j} > quantile(Ubp{j}(:), 0.7));
-            shp_pos = alphaShape(X(idx),Y(idx),alpha);
+        if steady == 0 && flag 
+            if min( size(Ubp{j}) ) > 1
+                idx = find(Ubp{j} > quantile(Ubp{j}(:), 0.7));
+                shp_pos = alphaShape(X(idx),Y(idx),alpha);
 
-            idx = find(Ubp{j} < quantile(Ubp{j}(:), 0.3));
-            shp_neg = alphaShape(X(idx),Y(idx),alpha);
-            figure(28);
-            subplot(1,3,1)
-            plot(shp_pos)
-            xlim([0,D])
-            ylim([0,D])
-            subplot(1,3,2)
-            plot(shp_neg)
-            xlim([0,D])
-            ylim([0,D])
-            subplot(1,3,3)
-            imagesc(Ubp{j})
-            colorbar()
-            title('positive')
+                idx = find(Ubp{j} < quantile(Ubp{j}(:), 0.3));
+                shp_neg = alphaShape(X(idx),Y(idx),alpha);
+                figure(28);
+                subplot(1,3,1)
+                plot(shp_pos)
+                xlim([0,D])
+                ylim([0,D])
+                subplot(1,3,2)
+                plot(shp_neg)
+                xlim([0,D])
+                ylim([0,D])
+                subplot(1,3,3)
+                imagesc(Ubp{j})
+                colorbar()
+                title('positive')
+            
+                
+                
+            end
 
             switch dist
                 case 'num'
-                    feature_bp{j}{1} = numRegions(shp_pos);
-                    feature_bp{j}{2} = numRegions(shp_neg);
+                    if min( size(Ubp{j}) ) > 1
+                        feature_bp{j}{1} = numRegions(shp_pos);
+                        feature_bp{j}{2} = numRegions(shp_neg);
+                    else
+                        
+                        idx = find(Ubp{j}(:) > 0.5*(max(Ubp{j}(:)) ));
+                        feature_bp{j}{1} = sum( diff(idx)>1 );
+                        idx = find(Ubp{j}(:) < 0.5*(- min(Ubp{j}(:)) ));
+                        feature_bp{j}{2} = sum( diff(idx)>1); 
+                    end
                 case 'area'
                     feature_bp{j}{1} = area(shp_pos, 1:numRegions(shp_pos));
                     p1 = perimeter(shp_pos, 1:numRegions(shp_pos));
@@ -125,8 +143,7 @@ if length(feature_bp_all) == 0
                     feature_bp{j}{2} = min(feature_bp{j}{2} , D);
 
 
-
-                case {'roundness','roundness-ks'}
+                case 'roundness'
                     areas = area(shp_pos, 1:numRegions(shp_pos));
                     perimeters = perimeter(shp_pos, 1:numRegions(shp_pos));   
                     feature_bp{j}{1} = 4*pi*areas./(perimeters.^2);
@@ -136,30 +153,12 @@ if length(feature_bp_all) == 0
                     perimeters = perimeter(shp_neg, 1:numRegions(shp_neg));   
                     feature_bp{j}{2} = 4*pi*areas./(perimeters.^2);
 
-                case 'PCA-roundness'
-                    feature_bp{j}{1} = zeros( 1,numRegions(shp_pos) );
-                    P = shp_pos.Points;
-                    for i = 1:numRegions(shp_pos)
-                        out = boundaryFacets(shp_pos,i); out = unique(out(:));
-                        samps = P(out,:);
-
-                        out = eigs( (samps - mean(samps))*(samps - mean(samps))');
-                        feature_bp{j}{1}(i) = out(2)/out(1);
-                    end
-
-                    feature_bp{j}{2} = zeros( 1,numRegions(shp_neg) );
-                    P = shp_neg.Points;
-                    for i = 1:numRegions(shp_neg)
-                        out = boundaryFacets(shp_neg,i); out = unique(out(:));
-                        samps = P(out,:);
-
-                        out = eigs( (samps - mean(samps))*(samps - mean(samps))');
-                        feature_bp{j}{2}(i) = out(2)/out(1);
-                    end
-
+                
 
 
             end
+        
+            
         else
             feature_bp{j}{1} = flag;feature_bp{j}{2} = flag;
             
@@ -175,6 +174,8 @@ if length(feature_bm_all) == 0
                     [Ubm{j},Vbm{j}] = Brusselator(a-dn(1),b-dn(2),viz, Nx,t_max);%, Ubm{j},Vbm{j});
                 case 'SH'
                     Ubm{j}= SH_2D(a-dn(1),b-dn(2));
+                case 'SH_1D'
+                    Ubm{j}= SH_1D(a-dn(1),b-dn(2));
                 case 'GS'
                     Ubm{j}= Gray_Scott(a-dn(1),b-dn(2));
                 case 'Schnakenberg'
@@ -183,32 +184,40 @@ if length(feature_bm_all) == 0
 %         cd ../../BifurcationTracing
         flag =  (max(Ubm{j}(:)) - min(Ubm{j}(:)) > 1E-1);
         if steady==0 && flag
-    
-            idx = find(Ubm{j} > quantile(Ubm{j}(:), 0.7));
-            shp_pos = alphaShape(X(idx),Y(idx),alpha);
+            if min( size(Ubm{j}) ) > 1
+                idx = find(Ubm{j} > quantile(Ubm{j}(:), 0.7));
+                shp_pos = alphaShape(X(idx),Y(idx),alpha);
 
-            idx = find(Ubm{j} < quantile(Ubm{j}(:), 0.3));
-            shp_neg = alphaShape(X(idx),Y(idx),alpha);
-            
-            figure(28);
-            subplot(1,3,1)
-            plot(shp_pos)
-            xlim([0,D])
-            ylim([0,D])
-            subplot(1,3,2)
-            plot(shp_neg)
-            xlim([0,D])
-            ylim([0,D])
-            subplot(1,3,3)
-            imagesc(Ubm{j})
-            colorbar()
-            title('negative')
+                idx = find(Ubm{j} < quantile(Ubm{j}(:), 0.3));
+                shp_neg = alphaShape(X(idx),Y(idx),alpha);
+
+                figure(28);
+                subplot(1,3,1)
+                plot(shp_pos)
+                xlim([0,D])
+                ylim([0,D])
+                subplot(1,3,2)
+                plot(shp_neg)
+                xlim([0,D])
+                ylim([0,D])
+                subplot(1,3,3)
+                imagesc(Ubm{j})
+                colorbar()
+                title('negative')
+            end
             
             
             switch dist
                 case 'num'
-                    feature_bm{j}{1} = numRegions(shp_pos);
-                    feature_bm{j}{2} = numRegions(shp_neg);
+                    if min( size(Ubm{j}) ) > 1
+                        feature_bm{j}{1} = numRegions(shp_pos);
+                        feature_bm{j}{2} = numRegions(shp_neg);
+                    else
+                        idx = find(Ubm{j}(:) > 0.5*(max(Ubm{j}(:)) ));
+                        feature_bm{j}{1} = sum( diff(idx)>1 );
+                        idx = find(Ubm{j}(:) < 0.5*(- min(Ubm{j}(:)) ));
+                        feature_bm{j}{2} = sum( diff(idx)>1);
+                    end
                 case 'area'
                     feature_bm{j}{1} = area(shp_pos, 1:numRegions(shp_pos));
                     p1 = perimeter(shp_pos, 1:numRegions(shp_pos));
@@ -227,7 +236,7 @@ if length(feature_bm_all) == 0
                     feature_bm{j}{1} = min(feature_bm{j}{1} , D);
                     feature_bm{j}{2} = min(feature_bm{j}{2} , D);
 
-                case {'roundness','roundness-ks'}
+                case 'roundness'
                     areas = area(shp_pos, 1:numRegions(shp_pos));
                     perimeters = perimeter(shp_pos, 1:numRegions(shp_pos));   
                     feature_bm{j}{1} = 4*pi*areas./(perimeters.^2);
@@ -237,27 +246,7 @@ if length(feature_bm_all) == 0
                     perimeters = perimeter(shp_neg, 1:numRegions(shp_neg));   
                     feature_bm{j}{2} = 4*pi*areas./(perimeters.^2);
 
-                case 'PCA-roundness'
-                    feature_bm{j}{1} = zeros( 1,numRegions(shp_pos) );
-                    P = shp_pos.Points;
-                    for i = 1:numRegions(shp_pos)
-                        out = boundaryFacets(shp_pos,i); out = unique(out(:));
-                        samps = P(out,:);
-
-                        out = eigs( (samps - mean(samps))*(samps - mean(samps))');
-                        feature_bm{j}{1}(i) = out(2)/out(1);
-                    end
-
-                    feature_bm{j}{2} = zeros( 1,numRegions(shp_neg) );
-                    P = shp_neg.Points;
-                    for i = 1:numRegions(shp_neg)
-                        out = boundaryFacets(shp_neg,i); out = unique(out(:));
-                        samps = P(out,:);
-
-                        out = eigs( (samps - mean(samps))*(samps - mean(samps))');
-                        feature_bm{j}{2}(i) = out(2)/out(1);
-                    end
-
+                
             end
         else
              feature_bm{j}{1} = flag;feature_bm{j}{2} = flag;
@@ -323,15 +312,8 @@ switch dist
            
         
         for j = 1:length(J)
-            switch dist
-                case 'roundness'
-                    out = out + ws_distance( feature_bm_all{j},feature_bp_all{j}, 2 );
-                case 'roundness-ks'
-                    [~,~,ks] = kstest2( feature_bm_all{j},feature_bp_all{j} );
-                    out = out + ks;
-                case 'PCA-roundness'
-                    out = out + ws_distance( feature_bm_all{j},feature_bp_all{j}, 2 );
-            end
+            out = out + ws_distance( feature_bm_all{j},feature_bp_all{j}, 2 );
+            
         end
 
         

@@ -1,28 +1,32 @@
-function [p_current,counter, sim_p_history, sim_metric_history] = bisect_significant_interval(model,p_c1, p_c2, dn, max_bisect, alpha,dist,t_max,sets,steady, interp,mode)
+function [p_current,counter, sim_p_history, sim_metric_history] = bisect_significant_interval(model,p_c1, p_c2, dn, max_bisect, alpha,max_count,dist,t_max,sets,steady, interp,mode)
+% 
+% switch model
+%     case 'Brusselator'
+%         max_count = 10;   
+%         alpha = 1;
+%     case 'SH'
+%         alpha = 0.3+0.05;
+%         max_count = 5;
+%     case 'GS'
+%         alpha = 0.01;
+%         max_count = 5;
+%     case 'SH_1D'
+%         alpha = [];
+%         max_count = 1;
+%     case 'Schnakenberg'
+%         alpha = 0.1;
+% %         alpha = 0.08;
+%         max_count = 10;
+%     case 'Barkley'
+%         alpha = [];
+%         max_count = 1;
+%     
+% end
 
-switch model
-    case 'Brusselator'
-        max_count = 10;   
-        alpha = 1;
-    case 'SH'
-        alpha = 0.3+0.05;
-        max_count = 5;
-    case 'GS'
-        alpha = 0.01;
-        max_count = 5;
-    case 'Oregonator'
-        alpha = 1.5;
-        max_count = 5;
-    case 'Schnakenberg'
-        alpha = 0.1;
-%         alpha = 0.08;
-        max_count = 10;
-end
-
-if steady
-    max_count = 1;
-end
-
+% if steady
+%     max_count = 1;
+% end
+% 
 switch sets
     case 'pos'
         J = 1;
@@ -31,7 +35,7 @@ switch sets
     case 'both'
         J = [1,2];
 end
-if nargin < 11
+if nargin < 12
     interp = 0;
 end
 
@@ -70,14 +74,31 @@ while counter_bisect < max_bisect
         
         if counter < max_count
             if counter+1 > length(feature_bp_old) || counter_bisect == 0
-                [dists_c1(counter+1),~,~,feature_bp{counter+1},feature_b0{counter+1}] = local_distance_vn(p_c1(1), p_c1(2), dn, 1,alpha,dist,t_max,model,[],[],sets,steady);
-            
-                [dists_c2(counter+1),~,~,~,feature_bm{counter+1}] = local_distance_vn(p_c2(1), p_c2(2), dn, 1,alpha,dist,t_max,model,feature_b0{counter+1},[],sets,steady);
+                switch model
+                    case {'Barkley','Bar-Eiswirth','Rossler'}
+                        [dists_c1(counter+1),~,~,feature_bp{counter+1},feature_b0{counter+1}] = local_distance_vn_spiral_c_alpha(p_c1(1), p_c1(2), dn, 1,alpha,dist,t_max,model,[],[],sets,steady);
+
+                        [dists_c2(counter+1),~,~,~,feature_bm{counter+1}] = local_distance_vn_spiral_c_alpha(p_c2(1), p_c2(2), dn, 1,alpha,dist,t_max,model,feature_b0{counter+1},[],sets,steady);
+                
+                    otherwise
+                        [dists_c1(counter+1),~,~,feature_bp{counter+1},feature_b0{counter+1}] = local_distance_vn(p_c1(1), p_c1(2), dn, 1,alpha,dist,t_max,model,[],[],sets,steady);
+
+                        [dists_c2(counter+1),~,~,~,feature_bm{counter+1}] = local_distance_vn(p_c2(1), p_c2(2), dn, 1,alpha,dist,t_max,model,feature_b0{counter+1},[],sets,steady);
+                end
             else
-                feature_bp{counter+1} = feature_bp_old{counter+1};
-                [dists_c1(counter+1),~,~,~,feature_b0{counter+1}] = local_distance_vn(p_c1(1), p_c1(2), dn, 1,alpha,dist,t_max,model,feature_bp{counter+1},[],sets,steady);
-                feature_bm{counter+1} = feature_bm_old{counter+1};
-                [dists_c2(counter+1),~,~,~,~] = local_distance_vn(p_c2(1), p_c2(2), dn, 1,alpha,dist,t_max,model,feature_b0{counter+1},feature_bm{counter+1},sets,steady);
+                switch model
+                    case {'Barkley','Bar-Eiswirth','Rossler'}
+                        feature_bp{counter+1} = feature_bp_old{counter+1};
+                        [dists_c1(counter+1),~,~,~,feature_b0{counter+1}] = local_distance_vn_spiral_c_alpha(p_c1(1), p_c1(2), dn, 1,alpha,dist,t_max,model,feature_bp{counter+1},[],sets,steady);
+                        feature_bm{counter+1} = feature_bm_old{counter+1};
+                        [dists_c2(counter+1),~,~,~,~] = local_distance_vn_spiral_c_alpha(p_c2(1), p_c2(2), dn, 1,alpha,dist,t_max,model,feature_b0{counter+1},feature_bm{counter+1},sets,steady);
+            
+                    otherwise
+                        feature_bp{counter+1} = feature_bp_old{counter+1};
+                        [dists_c1(counter+1),~,~,~,feature_b0{counter+1}] = local_distance_vn(p_c1(1), p_c1(2), dn, 1,alpha,dist,t_max,model,feature_bp{counter+1},[],sets,steady);
+                        feature_bm{counter+1} = feature_bm_old{counter+1};
+                        [dists_c2(counter+1),~,~,~,~] = local_distance_vn(p_c2(1), p_c2(2), dn, 1,alpha,dist,t_max,model,feature_b0{counter+1},feature_bm{counter+1},sets,steady);
+                end
             end
 %         end
             counter = counter + 1;
