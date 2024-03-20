@@ -26,7 +26,7 @@ git clone https://github.com/WenjunZHAOwO/Pattern_Continuation.git
 
 ## Example usage in MATLAB
 
-# To perform bifurcation tracing
+### To perform bifurcation tracing
 
 The following file contains examples for (1) snaking in 1D Swift-Hohenberg model, and (2) stripes/spots in various 2D reaction-diffusion systems (Brusselator, Swift-Hohenberg, Gray-Scott, Schnakenberg).
 
@@ -43,7 +43,7 @@ Main_Barkley_bisection
 Note that users may need to create their own Mex files by typing `make' in command line within the corresponding folder, such as DataGenerator/Spiral_Wave/Barkley.
 
 
-# To reproduce figures in paper
+### To reproduce figures in paper
 
 The following file shows how to display results together with solutions of IVP problems in parameter space for Brusselator:
 
