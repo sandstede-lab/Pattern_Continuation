@@ -1,34 +1,31 @@
 function [out,Ubp,Ubm,feature_bp_all,feature_bm_all] = local_distance_vn(a, b, dn, Rep,alpha,dist,t_max,model,feature_bp_all,feature_bm_all,sets,steady)
 
-if nargin < 6
+if nargin < 5
     dist = 'num';
 end
-if nargin < 8
+if nargin < 6
     t_max = 100;
 end
-if nargin < 9
+if nargin < 7
+    model = 'Brusselator';
+end
+if nargin < 8
     feature_bp_all = [];
     
 end
-if nargin < 10
+if nargin < 9
     feature_bm_all = [];
 end
 
-if nargin < 11
+if nargin < 10
     sets = 'pos';
 end
 
-if nargin < 12
+if nargin < 11
     steady = 0;
 end
 
-switch sets
-    case 'pos'
-        J = 1;
-    case 'neg'
-        J = 2;
 
-end
 
 
 feature_bp = cell(1,Rep);
@@ -71,7 +68,7 @@ if strcmp(model,'Brusselator')
 end
 
 
-if length(feature_bp_all) == 0
+if isempty(feature_bp_all)
     for j = 1:Rep
 %         cd ../DataGenerator/Reaction_Diffusion
             switch model
@@ -90,21 +87,22 @@ if length(feature_bp_all) == 0
         flag =  (max(Ubp{j}(:)) - min(Ubp{j}(:)) > 1E-1);
         if steady == 0 && flag 
             if min( size(Ubp{j}) ) > 1
-                idx = find(Ubp{j} > quantile(Ubp{j}(:), 0.7));
-                shp_pos = alphaShape(X(idx),Y(idx),alpha);
+                switch sets
+                    case 'pos'
+                        idx = find(Ubp{j} > quantile(Ubp{j}(:), 0.7));
+                    case 'neg'
+                        idx = find(Ubp{j} < quantile(Ubp{j}(:), 0.3));
+                end
+                shp = alphaShape(X(idx),Y(idx),alpha);
 
-                idx = find(Ubp{j} < quantile(Ubp{j}(:), 0.3));
-                shp_neg = alphaShape(X(idx),Y(idx),alpha);
+                
                 figure(28);
-                subplot(1,3,1)
-                plot(shp_pos)
+                subplot(1,2,1)
+                plot(shp)
                 xlim([0,D])
                 ylim([0,D])
-                subplot(1,3,2)
-                plot(shp_neg)
-                xlim([0,D])
-                ylim([0,D])
-                subplot(1,3,3)
+                
+                subplot(1,2,2)
                 imagesc(Ubp{j})
                 colorbar()
                 title('positive')
@@ -116,42 +114,20 @@ if length(feature_bp_all) == 0
             switch dist
                 case 'num'
                     if min( size(Ubp{j}) ) > 1
-                        feature_bp{j}{1} = numRegions(shp_pos);
-                        feature_bp{j}{2} = numRegions(shp_neg);
+                        feature_bp{j} = numRegions(shp);
+                        
                     else
                         
                         idx = find(Ubp{j}(:) > 0.5*(max(Ubp{j}(:)) ));
-                        feature_bp{j}{1} = sum( diff(idx)>1 );
-                        idx = find(Ubp{j}(:) < 0.5*(- min(Ubp{j}(:)) ));
-                        feature_bp{j}{2} = sum( diff(idx)>1); 
+                        feature_bp{j} = sum( diff(idx)>1 );
+                         
                     end
-                case 'area'
-                    feature_bp{j}{1} = area(shp_pos, 1:numRegions(shp_pos));
-                    p1 = perimeter(shp_pos, 1:numRegions(shp_pos));
-                    feature_bp{j}{1} = feature_bp{j}{1}./p1.*min(p1,D);
+               
+                case {'roundness','roundness-bag'}
+                    areas = area(shp, 1:numRegions(shp));
+                    perimeters = perimeter(shp, 1:numRegions(shp));   
+                    feature_bp{j} = 4*pi*areas./(perimeters.^2);
 
-
-
-                    feature_bp{j}{2} = area(shp_neg, 1:numRegions(shp_neg));
-                    p2 = perimeter(shp_neg, 1:numRegions(shp_neg));
-                    feature_bp{j}{2} = feature_bp{j}{2}./p2.*min(p2,D);
-                case 'perimeter'
-                    feature_bp{j}{1} = perimeter(shp_pos, 1:numRegions(shp_pos));
-                    feature_bp{j}{2} = perimeter(shp_neg, 1:numRegions(shp_neg));
-
-                    feature_bp{j}{1} = min(feature_bp{j}{1} , D);
-                    feature_bp{j}{2} = min(feature_bp{j}{2} , D);
-
-
-                case 'roundness'
-                    areas = area(shp_pos, 1:numRegions(shp_pos));
-                    perimeters = perimeter(shp_pos, 1:numRegions(shp_pos));   
-                    feature_bp{j}{1} = 4*pi*areas./(perimeters.^2);
-
-
-                    areas = area(shp_neg, 1:numRegions(shp_neg));
-                    perimeters = perimeter(shp_neg, 1:numRegions(shp_neg));   
-                    feature_bp{j}{2} = 4*pi*areas./(perimeters.^2);
 
                 
 
@@ -160,13 +136,13 @@ if length(feature_bp_all) == 0
         
             
         else
-            feature_bp{j}{1} = flag;feature_bp{j}{2} = flag;
+            feature_bp{j} = flag;
             
         end
     end
 end
 % fprintf('Ubp done\n')
-if length(feature_bm_all) == 0
+if isempty(feature_bm_all)
     for j = 1:Rep
 %         cd ../DataGenerator/Reaction_Diffusion
             switch model
@@ -185,22 +161,22 @@ if length(feature_bm_all) == 0
         flag =  (max(Ubm{j}(:)) - min(Ubm{j}(:)) > 1E-1);
         if steady==0 && flag
             if min( size(Ubm{j}) ) > 1
-                idx = find(Ubm{j} > quantile(Ubm{j}(:), 0.7));
-                shp_pos = alphaShape(X(idx),Y(idx),alpha);
+                switch sets
+                    case 'pos'
+                        idx = find(Ubm{j} > quantile(Ubm{j}(:), 0.7));
+                    case 'neg'
+                        idx = find(Ubm{j} < quantile(Ubm{j}(:), 0.3));
+                end
+                shp = alphaShape(X(idx),Y(idx),alpha);
 
-                idx = find(Ubm{j} < quantile(Ubm{j}(:), 0.3));
-                shp_neg = alphaShape(X(idx),Y(idx),alpha);
-
+                
                 figure(28);
-                subplot(1,3,1)
-                plot(shp_pos)
+                subplot(1,2,1)
+                plot(shp)
                 xlim([0,D])
                 ylim([0,D])
-                subplot(1,3,2)
-                plot(shp_neg)
-                xlim([0,D])
-                ylim([0,D])
-                subplot(1,3,3)
+                
+                subplot(1,2,2)
                 imagesc(Ubm{j})
                 colorbar()
                 title('negative')
@@ -210,46 +186,25 @@ if length(feature_bm_all) == 0
             switch dist
                 case 'num'
                     if min( size(Ubm{j}) ) > 1
-                        feature_bm{j}{1} = numRegions(shp_pos);
-                        feature_bm{j}{2} = numRegions(shp_neg);
+                        feature_bm{j} = numRegions(shp);
+                        
                     else
                         idx = find(Ubm{j}(:) > 0.5*(max(Ubm{j}(:)) ));
-                        feature_bm{j}{1} = sum( diff(idx)>1 );
-                        idx = find(Ubm{j}(:) < 0.5*(- min(Ubm{j}(:)) ));
-                        feature_bm{j}{2} = sum( diff(idx)>1);
+                        feature_bm{j} = sum( diff(idx)>1 );
+                        
                     end
-                case 'area'
-                    feature_bm{j}{1} = area(shp_pos, 1:numRegions(shp_pos));
-                    p1 = perimeter(shp_pos, 1:numRegions(shp_pos));
-                    feature_bm{j}{1} = feature_bm{j}{1}./p1.*min(p1,D);
+               
+                case {'roundness','roundness-bag'}
+                    areas = area(shp, 1:numRegions(shp));
+                    perimeters = perimeter(shp, 1:numRegions(shp));   
+                    feature_bm{j} = 4*pi*areas./(perimeters.^2);
 
 
-
-                    feature_bm{j}{2} = area(shp_neg, 1:numRegions(shp_neg));
-                    p2 = perimeter(shp_neg, 1:numRegions(shp_neg));
-                    feature_bm{j}{2} = feature_bm{j}{2}./p2.*min(p2,D);
-
-                case 'perimeter'
-                    feature_bm{j}{1} = perimeter(shp_pos, 1:numRegions(shp_pos));
-                    feature_bm{j}{2} = perimeter(shp_neg, 1:numRegions(shp_neg));
-
-                    feature_bm{j}{1} = min(feature_bm{j}{1} , D);
-                    feature_bm{j}{2} = min(feature_bm{j}{2} , D);
-
-                case 'roundness'
-                    areas = area(shp_pos, 1:numRegions(shp_pos));
-                    perimeters = perimeter(shp_pos, 1:numRegions(shp_pos));   
-                    feature_bm{j}{1} = 4*pi*areas./(perimeters.^2);
-
-
-                    areas = area(shp_neg, 1:numRegions(shp_neg));
-                    perimeters = perimeter(shp_neg, 1:numRegions(shp_neg));   
-                    feature_bm{j}{2} = 4*pi*areas./(perimeters.^2);
 
                 
             end
         else
-             feature_bm{j}{1} = flag;feature_bm{j}{2} = flag;
+             feature_bm{j} = flag;
             
         end
     end
@@ -258,63 +213,63 @@ end
 % feature_bp{1}
 % feature_bm{1}
 
-out = 0;
+
 switch dist
     case 'num'
 
         if isempty(feature_bp_all)
-            feature_bp_all = cell(1,length(J));
+            feature_bp_all = [];
             for i = 1:Rep
-                for j = 1:length(J)
-                    feature_bp_all{j} = [feature_bp_all{j},feature_bp{i}{J(j)}];
-                end
+                
+                feature_bp_all = [feature_bp_all,feature_bp{i}];
+                
                
                
             end
         end
         if isempty(feature_bm_all)
-            feature_bm_all = cell(1,length(J));
+            feature_bm_all = [];
             for i = 1:Rep
-                for j = 1:length(J)
-                    feature_bm_all{j} = [feature_bm_all{j},feature_bm{i}{J(j)}];
-                end
+                
+                feature_bm_all = [feature_bm_all,feature_bm{i}];
+                
+               
+               
             end
         end
 
         
-        for j = 1:length(J)
-            out = out + abs(sum(feature_bp_all{j}) - sum(feature_bm_all{j}))/Rep;
-        end
+        out = abs(sum(feature_bp_all) - sum(feature_bm_all))/Rep;
+        
 
        
                 
     otherwise
 %         feature_all = [];
         if isempty(feature_bp_all)
-            feature_bp_all = cell(1,length(J));
+            feature_bp_all = [];
             for i = 1:Rep
     
-                for j = 1:length(J)
-                    feature_bp_all{j} = [feature_bp_all{j},feature_bp{i}{J(j)}];
-                end
+                
+                    feature_bp_all = [feature_bp_all,feature_bp{i}];
+               
                
                
             end
         end
         if isempty(feature_bm_all)
-            feature_bm_all = cell(1,length(J));
+            feature_bm_all = [];
             for i = 1:Rep
-                for j = 1:length(J)
-                    feature_bm_all{j} = [feature_bm_all{j},feature_bm{i}{J(j)}];
-                end
+                
+                    feature_bm_all = [feature_bm_all,feature_bm{i}];
+                
             end
         end
            
         
-        for j = 1:length(J)
-            out = out + ws_distance( feature_bm_all{j},feature_bp_all{j}, 2 );
+        out = ws_distance( feature_bm_all,feature_bp_all, 2 );
             
-        end
+        
 
         
 end

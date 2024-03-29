@@ -12,7 +12,14 @@ This software computes pattern statistics in spatially extended systems and uses
 
 For simulating spiral waves, this repository provides the [EZ-Spiral](http://homepages.warwick.ac.uk/~masax/Software/ez_software.html) code written by Dwight Barkley and [Matlab code written by Stephanie Dodson and Bjorn Sandstede](https://github.com/sandstede-lab/Spiral-Waves-Boundary-Sinks-and-Spectra) that were used in [Sandstede and Scheel. Spiral waves: linear and nonlinear theory](http://bjornsandstede.com/publications.html).
 
-The implementation for computing the Wasserstein distance is written by Niklas Kolbe (2024): Wasserstein distance (https://github.com/nklb/wasserstein-distance).
+## Computation of the Wasserstein distance
+
+This work use the following implementation:
+
+Wasserstein distance between 1D histograms: Niklas Kolbe (2024) https://github.com/nklb/wasserstein-distance
+
+Transportation cost given a cost matrix: Antoine Rolet (2014) https://github.com/gpeyre/2017-ot-beginners/blob/master/matlab/mexEMD/mexEMD.cpp (based on an implementation by Nicolas Bonneeel).
+
 
 ## Requirement
 

@@ -155,7 +155,7 @@ while L_current < L
     
     
     
-    [p_current,counts(i),p_history_new, metric_history_new] = bisect_significant_interval(model, p_c1, p_c2, dn, max_bisect, alpha,max_count, dist,t_max,sets,steady, interp, mode);
+    [p_current,counts(i),p_history_new, metric_history_new] = bisect_significant_interval(model, p_c1, p_c2, dn, max_bisect, alpha,max_count, dist,t_max,sets,steady, interp);
     p_history_all = [p_history_all, p_history_new];
     metric_history_all = [metric_history_all, metric_history_new];
     p_history(:,i+2) = p_current';

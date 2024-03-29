@@ -1,40 +1,8 @@
-function [p_current,counter, sim_p_history, sim_metric_history] = bisect_significant_interval(model,p_c1, p_c2, dn, max_bisect, alpha,max_count,dist,t_max,sets,steady, interp,mode)
-% 
-% switch model
-%     case 'Brusselator'
-%         max_count = 10;   
-%         alpha = 1;
-%     case 'SH'
-%         alpha = 0.3+0.05;
-%         max_count = 5;
-%     case 'GS'
-%         alpha = 0.01;
-%         max_count = 5;
-%     case 'SH_1D'
-%         alpha = [];
-%         max_count = 1;
-%     case 'Schnakenberg'
-%         alpha = 0.1;
-% %         alpha = 0.08;
-%         max_count = 10;
-%     case 'Barkley'
-%         alpha = [];
-%         max_count = 1;
-%     
-% end
+function [p_current,counter, sim_p_history, sim_metric_history] = bisect_significant_interval(model,p_c1, p_c2, dn, max_bisect, alpha,max_count,dist,t_max,sets,steady, interp)
 
-% if steady
-%     max_count = 1;
-% end
-% 
-switch sets
-    case 'pos'
-        J = 1;
-    case 'neg'
-        J = 2;
-    case 'both'
-        J = [1,2];
-end
+
+
+
 if nargin < 12
     interp = 0;
 end
@@ -54,7 +22,7 @@ counter = 0;
 feature_bp = [];feature_bm = [];feature_b0 = [];
 val_c2 = 0; val_c1 = 0; 
 dists_c2 = []; dists_c1 = []; 
-feature_bp_old = []
+feature_bp_old = [];
 feature_bm_old = [];
 
 p_c0 = p_c1 + p_c2; p_c0 = p_c0/2;
@@ -110,35 +78,35 @@ while counter_bisect < max_bisect
         val_c1 = 0; val_c2=0; 
         
         
-        feature_bm_all = cell(1,length(J)); 
-        feature_bp_all = cell(1,length(J)); 
-        feature_b0_all = cell(1,length(J)); 
-        for j = 1:length(J)
+        feature_bm_all = [];
+        feature_bp_all = [];
+        feature_b0_all = [];
+        
             for ii = 1:counter
-                if strcmp(mode, 'dist')
-                
-                    feature_bm_all{j} = [feature_bm_all{j},feature_bm{ii}{j}];
-
-                    feature_bp_all{j} = [feature_bp_all{j},feature_bp{ii}{j}];
-
-                    feature_b0_all{j} = [feature_b0_all{j},feature_b0{ii}{j}];
-                else
+%                 if strcmp(mode, 'dist')
+%                 
+%                     feature_bm_all = [feature_bm_all,feature_bm{ii}];
+% 
+%                     feature_bp_all = [feature_bp_all,feature_bp{ii}];
+% 
+%                     feature_b0_all = [feature_b0_all,feature_b0{ii}];
+%                 else
                     
-                    feature_bm_all{j} = [feature_bm_all{j},feature_bm{ii}{j}];
+                    feature_bm_all = [feature_bm_all,feature_bm{ii}];
 
-                    feature_bp_all{j} = [feature_bp_all{j},feature_bp{ii}{j}];
+                    feature_bp_all = [feature_bp_all,feature_bp{ii}];
 
-                    feature_b0_all{j} = [feature_b0_all{j},feature_b0{ii}{j}];
+                    feature_b0_all = [feature_b0_all,feature_b0{ii}];
                     
                     
-                    feature_bm_all_cell{j}{ii} = feature_bm{ii}{j};
+                    feature_bm_all_cell{ii} = feature_bm{ii};
 
-                    feature_bp_all_cell{j}{ii} = feature_bp{ii}{j};
+                    feature_bp_all_cell{ii} = feature_bp{ii};
 
-                    feature_b0_all_cell{j}{ii} = feature_b0{ii}{j};
-                end
+                    feature_b0_all_cell{ii} = feature_b0{ii};
+%                 end
             end
-        end
+        
 %         feature_bm_all{1}
 %         feature_bp_all{1}
 %         feature_b0_all{1}
@@ -149,34 +117,27 @@ while counter_bisect < max_bisect
             flag = ttest(dists_c1(:),dists_c2(:));
         end
         if counter > 1 || max_count == 1
-            for j = 1:length(J)
-                if strcmp( mode, 'dist')
-                    val_c2 = val_c2 + feature_distance(cat(2,feature_bm_all{j}), cat(2,feature_b0_all{j}), dist, 'dist'); 
-                    val_c1 = val_c1 + feature_distance(cat(2,feature_b0_all{j}), cat(2,feature_bp_all{j}), dist, 'dist'); 
-                else
-                    if strcmp(dist,'roundness')
-                        val_c2 = val_c2 + feature_distance(feature_bm_all_cell{j}, feature_b0_all_cell{j}, dist, mode);
-                        val_c1 = val_c1 + feature_distance(feature_b0_all_cell{j}, feature_bp_all_cell{j}, dist, mode);
-                    else
-                        val_c2 = val_c2 + feature_distance(feature_bm_all{j}, feature_b0_all{j}, dist, mode);
-                        val_c1 = val_c1 + feature_distance(feature_b0_all{j}, feature_bp_all{j}, dist, mode);
-                    end
-                end
-                
+            switch dist
+                case {'num','roundness-bag'}
+                    val_c2 = val_c2 + feature_distance(cat(2,feature_bm_all), cat(2,feature_b0_all), dist);
+                    val_c1 = val_c1 + feature_distance(cat(2,feature_b0_all), cat(2,feature_bp_all), dist);
+                otherwise
+                    val_c2 = val_c2 + feature_distance(feature_bm_all_cell, feature_b0_all_cell, dist);
+                    val_c1 = val_c1 + feature_distance(feature_b0_all_cell, feature_bp_all_cell, dist);
             end
         end
         if steady == 0 % avoid homogeneous unless we want that
-            if feature_bp{1}{1}(1) == 0
+            if feature_bp{1}(1) == 0
                 val_c1 = -999;
             end
-            if feature_bm{1}{1}(1) == 0
+            if feature_bm{1}(1) == 0
                 val_c2 = -999;
             end
         end
         
         sim_p_history = [sim_p_history, p_c1'+dn', p_c1'-dn', p_c2'-dn'];
         
-        sim_metric_history = [sim_metric_history, mean(cat(2,feature_bp_all{1})), mean(cat(2,feature_b0_all{1})), mean(cat(2,feature_bm_all{1}))];
+        sim_metric_history = [sim_metric_history, mean(cat(2,feature_bp_all)), mean(cat(2,feature_b0_all)), mean(cat(2,feature_bm_all))];
         
         if counter >= max_count
             flag = 1;

@@ -5,8 +5,9 @@ close all;
 rng(5);
 
 path(path,'../DataGenerator/Reaction_Diffusion');
+path(path,'mexEMD');
 
-dist = 'roundness';% distance metric to be used. Alternative: 'roundness'
+dist = 'roundness-bag';% distance metric to be used. Alternative: 'roundness','num'
 
 interp = 1; % bifurcation tracing with interpolation to improve smoothness
 adapt = 1; % arc length per step is adaptive
