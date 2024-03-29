@@ -3,8 +3,8 @@ close all;
 
 path(path,'../DataGenerator/Spiral_Wave/');
 
-bgrid = linspace(0.04,0.24,7);
-agrid = linspace(0.01,0.08,7);
+bgrid = linspace(0.04,0.24,2);
+agrid = linspace(0.01,0.08,2);
 tipping_pts = cell(length(agrid),length(bgrid));
 % bgrid = bgrid(end:-1:1);
 L = 50;
