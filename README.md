@@ -49,7 +49,7 @@ Main_Barkley_bisection
 ```
 Note that users may need to create their own Mex files by typing `make' in command line within the corresponding folder, such as DataGenerator/Spiral_Wave/Barkley.
 
-For freezing method:
+### For freezing method:
 
 ```
 cd FreezingMethod
