@@ -14,7 +14,7 @@ For simulating spiral waves, this repository provides the [EZ-Spiral](http://hom
 
 ## Computation of the Wasserstein distance
 
-This work use the following implementation:
+This work uses the following implementation:
 
 Wasserstein distance between 1D histograms: Niklas Kolbe (2024) https://github.com/nklb/wasserstein-distance
 
@@ -49,6 +49,13 @@ Main_Barkley_bisection
 ```
 Note that users may need to create their own Mex files by typing `make' in command line within the corresponding folder, such as DataGenerator/Spiral_Wave/Barkley.
 
+For freezing method:
+
+```
+cd FreezingMethod
+freezing_method.m
+```
+
 
 ### To reproduce figures in paper
 
@@ -63,6 +70,8 @@ Visualization for Barkley:
 cd DisplayResults
 overlay_simulations_Barkley
 ```
+
+Results for freezing method can be found under the folder `FreezingMethod'.
 
 
 
