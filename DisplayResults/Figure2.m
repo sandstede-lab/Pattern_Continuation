@@ -19,14 +19,16 @@ hold on,
 
 scatter(p_history_all{1}(1,:),p_history_all{1}(2,:),[],metric_history_all{1},'filled');
 
-scatter(4.5070,8.6742,'*')
-scatter(3.9257,9.6796,'*')
+scatter(4.02195,10.5687,'*')
+scatter(5.06292,10.7525,'*')
 set(gca,'fontsize',24)
 caxis([0,1])
 colorbar()
 
 subplot(2,4,8)
-a = 4.5070; b = 8.6742;
+% a = 4.5070; b = 8.6742;
+a = 5.06292; b = 10.7525;
+
 U = Brusselator(a,b);
 imagesc(U);
 xticks([]);
@@ -61,7 +63,8 @@ set(gca,'fontsize',16)
 xlim([0,1])
 
 subplot(2,4,1)
-a = 3.9257; b = 9.6796;
+% a = 3.9257; b = 9.6796;
+a = 4.02195; b = 10.5687;
 U = Brusselator(a,b);
 imagesc(U);
 xticks([]);
