@@ -49,13 +49,6 @@ Main_Barkley_bisection
 ```
 Note that users may need to create their own Mex files by typing `make' in command line within the corresponding folder, such as DataGenerator/Spiral_Wave/Barkley.
 
-### For freezing method:
-
-```
-cd FreezingMethod
-freezing_method.m
-```
-
 
 ### To reproduce figures in paper
 
@@ -71,7 +64,14 @@ cd DisplayResults
 overlay_simulations_Barkley
 ```
 
-Results for freezing method can be found under the folder `FreezingMethod'.
+### To use freezing method:
+
+```
+cd FreezingMethod
+freezing_method.m
+```
+
+Note that users may need to create  Results for freezing method can be found under the folder `FreezingMethod'.
 
 
 
