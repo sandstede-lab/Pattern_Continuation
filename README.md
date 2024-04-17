@@ -28,7 +28,7 @@ MATLAB
 ## Source
 
 ```
-git clone https://github.com/WenjunZHAOwO/Pattern_Continuation.git
+git clone https://github.com/sandstede-lab/Pattern_Continuation.git
 ```
 
 ## Example usage in MATLAB
