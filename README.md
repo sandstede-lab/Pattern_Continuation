@@ -51,8 +51,14 @@ Main_Barkley_bisection
 ```
 Note that the spiral wave simulations may require compilation locally. Users may need to create their own Mex files by typing `make' in command line within the corresponding folder, such as DataGenerator/Spiral_Wave/Barkley.
 
+### To use freezing method:
 
-### To reproduce figures in paper
+```
+cd FreezingMethod
+freezing_method
+```
+
+### To reproduce specific figures in paper
 Scripts to reproduce each figure in paper are hosted under ReproduceFigures and labeled according to the index in paper. For example, to generate Figure 6 (simulations displayed together with our results):
 
 ```
@@ -60,12 +66,7 @@ Cd ReproduceFigures
 Figure6
 ```
 
-### To use freezing method:
 
-```
-cd FreezingMethod
-freezing_method
-```
 
 
 
