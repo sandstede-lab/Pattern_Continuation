@@ -3,7 +3,8 @@ close all;
 
 warning off
 
-
+path(path,'../DataGenerator/Spiral_Wave/');
+path(path,'.');
 
 new_file = 1;
 radial = 1;
@@ -27,7 +28,7 @@ r = 20; % radius of area to be matched
 U_history = cell(1, round(total_steps/step) );
 tip_pt = zeros(2,  round(total_steps/step) );
 counter = 1;
-cd Barkley_radial_c
+cd ../DataGenerator/Spiral_Wave/Barkley_radial_c
 system('rm ic.dat');
 
 fid = fopen('task.dat');
@@ -112,7 +113,7 @@ for i = 1:round(total_steps/step)
     [U_current,V_current] = ezspiral_my(U_prior,V_prior);
 
     
-    cd ..
+    cd ../../../FreezingMethod
 
     
     
@@ -126,7 +127,7 @@ for i = 1:round(total_steps/step)
     [R,b(:,i),x1,x2,thetat] = find_rotation_translation_alpha( U0, U_current, [X(:);0], [Y(:);0], tip0, tip_current, r, h,init);
     
 
-    cd Barkley_radial_c
+    cd ../DataGenerator/Spiral_Wave/Barkley_radial_c
     
     
     
@@ -294,7 +295,7 @@ end
 
 
 
-cd ..
+cd ../../../FreezingMethod
 
 if make_movie
     close(writerObj);
@@ -307,8 +308,7 @@ figure;
 subplot(1,2,1)
 theta_c = cumsum(real(theta));
 plot(0.05*step*[1:length(theta_c)],theta_c,'linewidth',2)
-% hold on,
-% plot(real(theta),'linewidth',2)
+
 title('$\theta$','interpreter','latex')
 grid on
 xlabel('$t$','interpreter','latex')
@@ -318,15 +318,14 @@ subplot(1,2,2)
 for t = 1:size(b,2)
     
     R = [cos(theta(t)), sin(theta(t)); -sin(theta(t)), cos(theta(t))];
-%     bt(:,t) = inv(eye(2)-R)*b(:,t);
+
     bt(:,t) = R*b(:,t);
     for tt = t-1:-1:1
         R = [cos(theta(tt)), sin(theta(tt)); -sin(theta(tt)), cos(theta(tt))];
         bt(:,t) = R* (bt(:,t) + b(:,tt));
     end
     
-%     R = [cos(theta_c(t)), sin(theta_c(t)); -sin(theta_c(t)), cos(theta_c(t))];
-%     bt(:,t) = inv(R)*bt(:,t);
+
     
 end
 

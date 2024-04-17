@@ -1,6 +1,6 @@
 0.840000
-0.240000
-12.500000
+0.190000
+18.181818
 50.     parameter Lx  (Box length in x-direction)
 0.00	parameter Dv  (Ratio of diffusion coefficients)
 

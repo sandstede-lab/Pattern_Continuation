@@ -76,6 +76,10 @@ if isempty(feature_bp_all)
                     [Ubp{j},Vbp{j}] = Brusselator(a+dn(1),b+dn(2),viz, Nx,t_max);
                 case 'SH'
                     Ubp{j}= SH_2D(a+dn(1),b+dn(2));
+                case 'SH_spots_init'
+                    Ubp{j}= SH_2D(a+dn(1),b+dn(2),'spots');
+                case 'SH_stripes_init'
+                    Ubp{j}= SH_2D(a+dn(1),b+dn(2),'stripes');   
                 case 'SH_1D'
                     Ubp{j}= SH_1D(a+dn(1),b+dn(2));
                 case 'GS'
@@ -150,6 +154,10 @@ if isempty(feature_bm_all)
                     [Ubm{j},Vbm{j}] = Brusselator(a-dn(1),b-dn(2),viz, Nx,t_max);%, Ubm{j},Vbm{j});
                 case 'SH'
                     Ubm{j}= SH_2D(a-dn(1),b-dn(2));
+                case 'SH_spots_init'
+                    Ubm{j}= SH_2D(a-dn(1),b-dn(2),'spots');
+                case 'SH_stripes_init'
+                    Ubm{j}= SH_2D(a-dn(1),b-dn(2),'stripes');  
                 case 'SH_1D'
                     Ubm{j}= SH_1D(a-dn(1),b-dn(2));
                 case 'GS'

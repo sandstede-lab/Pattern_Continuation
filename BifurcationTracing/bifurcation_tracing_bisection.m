@@ -1,4 +1,4 @@
-function [p_history,counts,L_history,p_history_all,metric_history_all] = bifurcation_tracing_bisection(init1, init2, L,max_step_arc_length, min_step_arc_length, dist, max_bisect, model, sets,steady,interp,mode)
+function [p_history,counts,L_history,p_history_all,metric_history_all] = bifurcation_tracing_bisection(init1, init2, L,max_step_arc_length, min_step_arc_length, dist, max_bisect, model, sets,steady,interp)
 
 % Bifurcation tracing `algorithm' 
 % N: number of steps
@@ -26,22 +26,16 @@ if nargin < 7
     model='Brusselator';
 end
 if nargin < 8
-    sets = 'both';
+    sets = 'pos';
 end
 
-switch sets
-    case 'pos'
-        J = 1;
-    case 'neg'
-        J = 2;
-    case 'both'
-        J = [1,2];
-end
+
 if nargin < 11
     interp = 0;
 end
+
 if nargin < 12
-    mode = 'dist';
+    Uinit = [];
 end
 
 
@@ -54,7 +48,7 @@ b(2) = init2(2);
 
 alpha = [];
 max_count = 1;
-step_size = max_step_arc_length;
+
 
 % 2 initial points for transition curve
 
@@ -70,13 +64,13 @@ switch model
 %         alpha = 1;
 
         
-    case 'SH'
+    case {'SH','SH_spots_init','SH_stripes_init'}
         
         
         
         
         alpha = 0.3+0.05;
-        max_count = 5%5*2;
+        max_count = 5;
         
     case 'GS'
         
@@ -93,7 +87,7 @@ switch model
    
 end
 
-if steady
+if steady  || strcmp(model,'SH_1D') || strcmp(model,'SH_spots_init') || strcmp(model,'SH_stripes_init')
     max_count = 1;
 end
 % For each combination of parameter, do 5 simulations
@@ -210,7 +204,7 @@ while L_current < L
                 xlim([3.5,9])
                 xlabel('a')
                 ylabel('b')
-            case 'SH'
+            case {'SH','SH_stripes_init','SH_spots_init'}
                 ylim([0,2])
                 xlim([-0.15,0.4])
                 xlabel('\mu')

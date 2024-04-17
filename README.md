@@ -39,7 +39,7 @@ The following file contains examples for (1) snaking in 1D Swift-Hohenberg model
 
 ```
 cd BifurcationTracing
-Main_adapt_bisection
+Main_ReactionDiffusion2D
 ```
 
 The following file contains examples for spiral waves:
@@ -51,17 +51,11 @@ Note that users may need to create their own Mex files by typing `make' in comma
 
 
 ### To reproduce figures in paper
+Scripts to reproduce each figure in paper are hosted under ReproduceFigures and labeled according to the index in paper. For example, to generate Figure 6 (simulations displayed together with our results):
 
-The following file shows how to display results together with solutions of IVP problems in parameter space for Brusselator:
-
 ```
-cd DisplayResults
-overlay_simulations_Brusselator
-```
-Visualization for Barkley:
-```
-cd DisplayResults
-overlay_simulations_Barkley
+Cd ReproduceFigures
+Figure6
 ```
 
 ### To use freezing method:

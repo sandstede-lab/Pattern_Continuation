@@ -93,8 +93,8 @@ while counter_bisect < max_bisect
 %                 else
                     
                     feature_bm_all = [feature_bm_all,feature_bm{ii}];
-
-                    feature_bp_all = [feature_bp_all,feature_bp{ii}];
+                    
+                    feature_bp_all = [feature_bp_all,feature_bp{ii}]
 
                     feature_b0_all = [feature_b0_all,feature_b0{ii}];
                     
@@ -125,6 +125,7 @@ while counter_bisect < max_bisect
                     val_c2 = val_c2 + feature_distance(feature_bm_all_cell, feature_b0_all_cell, dist);
                     val_c1 = val_c1 + feature_distance(feature_b0_all_cell, feature_bp_all_cell, dist);
             end
+        
         end
         if steady == 0 % avoid homogeneous unless we want that
             if feature_bp{1}(1) == 0
@@ -193,12 +194,10 @@ while counter_bisect < max_bisect
                 
                 val_c2_prior = val_c2;
                 val_c1_prior = val_c1;
-%                 p_c2_prior = p_c2; 
-%                 p_c1_prior = p_c1;
+
                 if counter_bisect == 1
                     dn = 0.5*dn;
-%                     p_c2_prior = p_c2; 
-%                     p_c1_prior = p_c1;
+
                     p_c2 = p_c1 - dn;
                     p_c1 = p_c2 + 2*dn;
                 end
@@ -243,7 +242,7 @@ end
 
 
     
-    
+
     
     
     

@@ -10,15 +10,16 @@ adapt = 1;
 
 model = 'Barkley';
 save_flag = 0;
-steady = 0;
+steady = 1;
 max_bisect = 2;
 
 interp = 1;
-dist = 'ring_fit';
+dist = 'meander';
+dist = 'retract';
 sets = 'pos';
             
 switch dist
-    case 'ring_fit'
+    case 'meander'
     % line 1
         L = 0.5*2;
 
@@ -36,21 +37,20 @@ switch dist
         max_step_arc_length = 0.01;
         min_step_arc_length = 0.01;
         
-    case 'line_fit'
+    case 'drift'
         L = 0.5;
         init1 = [0.45,0.005];
         init2 = [0.48,0.02];
         max_step_arc_length = 0.005*1.5;
         min_step_arc_length = 0.005*1.5;
 
-end
-if steady
-    L = 0.5;
-    init1 = [0.37,0.01];
-    init2 = [0.38,0.02];
+    case 'retract'
+        L = 0.5;
+        init1 = [0.37,0.01];
+        init2 = [0.38,0.02];
 
-    max_step_arc_length = 0.01;
-    min_step_arc_length = 0.01;
+        max_step_arc_length = 0.01;
+        min_step_arc_length = 0.01;
 end
 
 

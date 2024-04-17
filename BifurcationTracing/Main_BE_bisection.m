@@ -10,11 +10,11 @@ adapt = 1;
 % models = {'SH','Brusselator'};
 sets = 'pos';
 model = 'Bar-Eiswirth';%,'SH'}
-% models = {'Schnakenberg'}
+
 i = 1;
-save_flag = 1
-% models = {'Brusselator'};
-steady = 0;
+save_flag = 0
+
+steady = 1;
 
 max_bisect = 2;
 interp = 1;
@@ -22,23 +22,23 @@ interp = 1;
 
 
 
-    switch steady
-        case 0
+switch steady
+    case 0
 
-           dists = {'ring_fit','ring_fit2'}%,'ring_fit'}
-%                dists = {'ring_fit2'};
-           dists = {'turbulence','ring_fit'};
-           dists = {'turbulence'};
-        case 1
-            dists = {'steady'}
-    end
+       dists = {'meander','meander2'}%,'meander'}
+%                dists = {'meander2'};
+       dists = {'turbulence','meander'};
+       dists = {'turbulence'};
+    case 1
+        dists = {'retract'}
+end
 
     linestyles = {'o-', '*--', 'x:','^-.'};
 
     for j = 1:length(dists)
 
             switch dists{j}
-                case 'ring_fit'
+                case 'meander'
                     L = 0.5;
 
                         % line 1:
@@ -58,7 +58,7 @@ interp = 1;
                         max_step_arc_length = 0.003;
                         min_step_arc_length = 0.003;
                         
-                case 'steady'
+                case 'retract'
                         L = 0.1;
                         init1 = [0.19,0.2];
                         init2 = [0.18,0.2];

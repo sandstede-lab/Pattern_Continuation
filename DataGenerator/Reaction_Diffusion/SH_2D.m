@@ -1,4 +1,4 @@
-function [u] = SH(mu, nu, viz, N, Uinit, T)
+function [u] = SH_2D(mu, nu, Uinit, viz, N, T)
 %GENERATE_SH_TIMELAPSE Summary of this function goes here
 %   Displays and saves timelapses of the Swift-Hohenberg model at specified timepoints
 % solves Swift-Hohenberg equation using ETD1 scheme
@@ -32,9 +32,9 @@ function [u] = SH(mu, nu, viz, N, Uinit, T)
 %P_h0 = -8*s^2/135;               % limit eps between hexagons and 0 stable solutions
 %P_hr = (5*s^2/15)*(7+3*sqrt(6)); % limit eps between hexagons and rolls stable solutions
 
-%T = 1500;
 
-if nargin < 3
+
+if nargin < 4
     viz = 0;
 end
 if nargin < 6
@@ -42,7 +42,7 @@ if nargin < 6
     T = 1000;%/2*1.5;
 end
 % T = 600;
-if nargin < 4
+if nargin < 5
     N  = 128;
 end
 L  = 16*pi;
@@ -54,10 +54,15 @@ y  = x';
 [xx,yy] = meshgrid(x,y);
 
 %% initial condition
-if nargin < 5
+if nargin < 3
     u = 1.5*rand(size(xx));
 else
-    u = Uinit;
+    switch Uinit
+        case 'spots'
+            u = 0.5/3*(cos(xx) + cos((xx+sqrt(3)*yy)/2) + cos((xx-sqrt(3)*yy)/2));
+        case 'stripes'
+            u = 0.2*cos(xx);
+    end
 end
 
 % if init == 1

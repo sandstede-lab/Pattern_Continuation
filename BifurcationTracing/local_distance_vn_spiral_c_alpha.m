@@ -170,12 +170,11 @@ if length(feature_bp) == 0
        
         
             switch dist
-                case 'steady'
-                   feature_bp{j} = min(1,size(tipping_pts{j},1)/1000);%2*steady*(1 - floor(size(tipping_pts{j},1)/1000));
-                   feature_bp{j} = size(tipping_pts{j},1) < 1000;
+                case 'retract'
+                   
                    feature_bp{j} = max(u(:))-min(u(:)) < 1E-2;
                      
-                case 'ring_fit'
+                case 'meander'
                    
                      if size(tipping_pts{j},1) < 100
                           feature_bp{j} = 0;
@@ -212,7 +211,7 @@ if length(feature_bp) == 0
                         title( feature_bp{j} )
                      end
                     
-                 case 'line_fit'
+                 case 'drift'
                         if size(tipping_pts{j},1) < 100
                               feature_bp{j} = 0;
                         else
@@ -295,24 +294,8 @@ if length(feature_bp) == 0
                     figure(11)
                     plot(shp)
                     title(feature_bp{j})
-                case 'area2'
-                    % this is only for Rossler
-                    X = linspace(0,250,526); [X,Y] = meshgrid(X,X);
-                    idx = find(u(:) > min(u(:))+0.9*(max(u(:)) - min(u(:))) );
-                    shp = alphaShape( [X(idx),Y(idx)],1);
-                    feature_bp{j} = area(shp,1:numRegions(shp))/250/250;
-                    figure(11)
-                    plot(shp)
-                    title(feature_bp{j})
-                case 'num'
-                    % this is only for Rossler
-                    X = linspace(0,250,526); [X,Y] = meshgrid(X,X);
-                    idx = find(u(:) > min(u(:))+0.95*(max(u(:)) - min(u(:))) );
-                    shp = alphaShape( [X(idx),Y(idx)],1);
-                    feature_bp{j} = numRegions(shp);
-                    figure(11)
-                    plot(shp)
-                    title(feature_bp{j})
+                
+                
                     
             end
                 
@@ -462,47 +445,19 @@ if length(feature_bm) == 0
        
         
             switch dist
-                case 'steady'
+                case 'retract'
                     feature_bm{j} = min(size(tipping_pts{j},1)/1000,1);
                     feature_bm{j} = size(tipping_pts{j},1) < 1000;
                     feature_bm{j} = max(u(:))-min(u(:)) < 1E-2;
-                case 'ring_fit'
+                case 'meander'
                     if size(tipping_pts{j},1) < 100
                         feature_bm{j} = 0;
                     else
-%                         alpha0 = max( tipping_pts{j}(:,2))-min(tipping_pts{j}(:,2));
-%                         alpha0 = max( max( tipping_pts{j}(:,1))-min(tipping_pts{j}(:,1)),alpha0);
-%                         alpha = alpha0/2.5;
-%                         shp_pos = alphaShape(tipping_pts{j}(:,1),tipping_pts{j}(:,2),alpha,'RegionThreshold',1);
-%                         while numRegions(shp_pos) < 1
-%                             alpha = alpha*0.9;
-%                             shp_pos = alphaShape(tipping_pts{j}(:,1),tipping_pts{j}(:,2),alpha);%,alpha,'RegionThreshold',1);
-%                             
-%                             
-%                         end
-%                         shp_area = area(shp_pos,1);
-%                         shp_peri = perimeter(shp_pos,1)/2/pi;
-% %                         shp_rdns = shp_area/(max( tipping_pts{j}(:,2))-min(tipping_pts{j}(:,2)));
-% %                         shp_rdns = shp_rdns/(max( tipping_pts{j}(:,1))-min(tipping_pts{j}(:,1)));%/pi/shp_peri/shp_peri;
-% %                         shp_area = shp_area/(   sum(perimeter(shp_pos,1:numRegions(shp_pos)))^2);
-%                         shp_rdns = shp_area/pi/shp_peri/shp_peri;
 
                         alpha0 = max( tipping_pts{j}(:,2))-min(tipping_pts{j}(:,2));
                         alpha0 = max( max( tipping_pts{j}(:,1))-min(tipping_pts{j}(:,1)),alpha0);
                         alpha = alpha0/2.5;
-%                         shp_pos = alphaShape(tipping_pts{j}(:,1),tipping_pts{j}(:,2),alpha,'RegionThreshold',1,'HoleThreshold',1);
-%                         while numRegions(shp_pos) < 1
-%                             alpha = alpha*0.9;
-%                             shp_pos = alphaShape(tipping_pts{j}(:,1),tipping_pts{j}(:,2),alpha);%,alpha,'RegionThreshold',1);
-%                             
-%                             
-%                         end
-%                         shp_area = area(shp_pos,1);
-%                         shp_peri = perimeter(shp_pos,1)/2/pi;
-% %                         shp_rdns = shp_area/(max( tipping_pts{j}(:,2))-min(tipping_pts{j}(:,2)));
-% %                         shp_rdns = shp_rdns/(max( tipping_pts{j}(:,1))-min(tipping_pts{j}(:,1)));
-%                         shp_rdns = shp_area/pi/shp_peri/shp_peri;
-                        
+                   
                         shp_pos = alphaShape(tipping_pts{j}(:,1),tipping_pts{j}(:,2),alpha);%,alpha,'RegionThreshold',1);
                         
                         shp_area = sum(area(shp_pos,1:numRegions(shp_pos)));
@@ -517,13 +472,13 @@ if length(feature_bm) == 0
                     end
                         
                     
-                case 'line_fit'
+                case 'drift'
                     if size(tipping_pts{j},1) < 100
                           feature_bm{j} = 0;
                      else
                         out = eigs( ( tipping_pts{j}- mean(tipping_pts{j}))'*(tipping_pts{j} - mean(tipping_pts{j})));
                         l = out(2)/out(1);
-                        l
+                        %l
                         while l > 0.6
                             tipping_pts{j} = tipping_pts{j}(1:round(size(tipping_pts{j},1)*0.75),:);
                             out = eigs( ( tipping_pts{j}- mean(tipping_pts{j}))'*(tipping_pts{j} - mean(tipping_pts{j})));
@@ -593,34 +548,20 @@ if length(feature_bm) == 0
                     figure(11)
                     plot(shp)
                     title(feature_bm{j})
-                case 'area2'
-                    % this is only for Rossler
-                    X = linspace(0,250,526); [X,Y] = meshgrid(X,X);
-                    idx = find(u(:) > min(u(:))+0.9*(max(u(:)) - min(u(:))) );
-                    shp = alphaShape( [X(idx),Y(idx)],1);
-                    feature_bm{j} = area(shp,1:numRegions(shp))/250/250;
-                    figure(11)
-                    plot(shp)
-                    title(feature_bm{j})
-                case 'num'
-                    % this is only for Rossler
-                    X = linspace(0,250,526); [X,Y] = meshgrid(X,X);
-                    idx = find(u(:) > min(u(:))+0.95*(max(u(:)) - min(u(:))) );
-                    shp = alphaShape( [X(idx),Y(idx)],1);
-                    feature_bm{j} = numRegions(shp);
-                    figure(11)
-                    plot(shp)
-                    title(feature_bm{j})
+                
             
             end
                 
     end
 end
 
-if strcmp(dist,'area2')
-    out = ws_distance(feature_bp{1}, feature_bm{1}, 2);
-else
-    out = abs( feature_bp{1} - feature_bm{1} );
+if iscell(feature_bp)
+    feature_bp = feature_bp{1};
 end
+if iscell(feature_bm)
+    feature_bm = feature_bm{1};
+end
+out = abs( feature_bp - feature_bm );
+
 % fprintf('Ubm done\n')
 

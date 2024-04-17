@@ -1,6 +1,6 @@
-0.210500
+0.270000
 0.200000
-3.746000
+3.900000
 250.	parameter L
 1.0 	Dv (AKA ratio of diffusion coefficients)
 

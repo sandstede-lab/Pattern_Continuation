@@ -33,13 +33,8 @@ switch dist
         out = mexEMD( ones(Rep,1)/Rep, ones(Rep,1)/Rep, dist_mat);
 %         cd ..
 
-%                     feature_bm_all_list = zeros(1,Rep); feature_bp_all_list = zeros(1,Rep);
-%                     for i = 1:Rep
-%                         feature_bm_all_list(i) = mean(feature_bm_all{i});
-%                         feature_bp_all_list(i) = mean(feature_bp_all{i});
-%                     end
-%                     out = out + ws_distance( feature_bm_all_list,feature_bp_all_list, 2 );
-
+    otherwise
+        out = abs( feature_bp_all{1} - feature_bm_all{1} );
 
 
 
