@@ -37,17 +37,19 @@ git clone https://github.com/WenjunZHAOwO/Pattern_Continuation.git
 
 The following file contains examples for (1) snaking in 1D Swift-Hohenberg model, and (2) stripes/spots in various 2D reaction-diffusion systems (Brusselator, Swift-Hohenberg, Gray-Scott, Schnakenberg).
 
+Example usage: tracing out stripe/spot interface for Brusselator:
+
 ```
 cd BifurcationTracing
 Main_ReactionDiffusion2D
 ```
 
-The following file contains examples for spiral waves:
+Spiral wave (Barkley):
 ```
 cd BifurcationTracing
 Main_Barkley_bisection
 ```
-Note that users may need to create their own Mex files by typing `make' in command line within the corresponding folder, such as DataGenerator/Spiral_Wave/Barkley.
+Note that the spiral wave simulations may require compilation locally. Users may need to create their own Mex files by typing `make' in command line within the corresponding folder, such as DataGenerator/Spiral_Wave/Barkley.
 
 
 ### To reproduce figures in paper
@@ -62,10 +64,8 @@ Figure6
 
 ```
 cd FreezingMethod
-freezing_method.m
+freezing_method
 ```
-
-Note that users may need to create  Results for freezing method can be found under the folder `FreezingMethod'.
 
 
 
