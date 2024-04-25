@@ -1,10 +1,8 @@
 # Pattern_Continuation
 
-Code for data-driven continuation of patterns and their bifurcations (link XXX)
+Code for the manuscript [Data-driven continuation of patterns and their bifurcations](http://www.bjornsandstede.com/papers/Data_Driven_Continuation.pdf)
 
-Authors: Wenjun Zhao, Sam Maffa, Bjorn Sandstede
-
-For questions/comments please contact XXX
+Authors: Wenjun Zhao, Samuel Maffa, Bjorn Sandstede
 
 ## Description
 
