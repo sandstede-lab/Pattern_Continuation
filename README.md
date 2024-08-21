@@ -1,10 +1,8 @@
 # Pattern_Continuation
 
-Code for data-driven continuation of patterns and their bifurcations (link XXX)
+Code for the manuscript [Data-driven continuation of patterns and their bifurcations](http://www.bjornsandstede.com/papers/Data_Driven_Continuation.pdf)
 
-Authors: Wenjun Zhao, Sam Maffa, Bjorn Sandstede
-
-For questions/comments please contact XXX
+Authors: Wenjun Zhao, Samuel Maffa, Bjorn Sandstede
 
 ## Description
 
@@ -31,6 +29,9 @@ MATLAB
 git clone https://github.com/sandstede-lab/Pattern_Continuation.git
 ```
 
+## Organization of code
+
+
 ## Example usage in MATLAB
 
 ### To perform bifurcation tracing
@@ -40,15 +41,27 @@ The following file contains examples for (1) snaking in 1D Swift-Hohenberg model
 Example usage: tracing out stripe/spot interface for Brusselator:
 
 ```
-cd BifurcationTracing
-Main_ReactionDiffusion2D
+cd ReproduceCurves
+Main_Brusselator
+```
+The file has starting points/directions already. An alternative is to use the automated starting point search tool:
+```
+cd ReproduceCurves
+Test_IC_Brusselator
 ```
 
 Spiral wave (Barkley):
 ```
-cd BifurcationTracing
-Main_Barkley_bisection
+cd ReproduceCurves
+Main_Barkley
 ```
+The file has starting points/directions already. An alternative is to use the automated starting point search tool:
+```
+cd ReproduceCurves
+Test_IC_Barkley
+```
+
+
 Note that the spiral wave simulations may require compilation locally. Users may need to create their own Mex files by typing `make' in command line within the corresponding folder, such as DataGenerator/Spiral_Wave/Barkley.
 
 ### To use freezing method:
@@ -65,7 +78,6 @@ Scripts to reproduce each figure in paper are hosted under ReproduceFigures and 
 Cd ReproduceFigures
 Figure6
 ```
-
 
 
 

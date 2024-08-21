@@ -1,7 +1,7 @@
 clear all;
 close all;
 
-path(path,'../DataGenerator/Spiral_Wave/');
+path(path,'../Models/Spiral_Wave/');
 path(path,'Output_SpiralWave');
 
 agrid = linspace(2.3,3.9,6);
@@ -19,13 +19,13 @@ for i = 1:length(agrid)
         
         cnew = num2str(agrid(i),'%1.6f');
         anew = num2str(bgrid(j),'%1.6f');
-        fid = fopen('../DataGenerator/Spiral_Wave/Rossler/task.txt');
+        fid = fopen('../Models/Spiral_Wave/Rossler/task.txt');
         C=textscan(fid,'%s','delimiter','\n');
         fclose(fid);
         C{1}{3} = cnew; C{1}{1} = anew;
-        writecell(C{1},'../DataGenerator/Spiral_Wave/Rossler/task.txt','QuoteStrings',0)
+        writecell(C{1},'../Models/Spiral_Wave/Rossler/task.txt','QuoteStrings',0)
         
-        cd ../DataGenerator/Spiral_Wave/Rossler
+        cd ../Models/Spiral_Wave/Rossler
        
         system('./ezspiral')
 

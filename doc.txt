@@ -1,0 +1,12 @@
+temporary documentation
+
+new model file: model.m
+* Dependence: Models/
+
+new feature file: feature_evaluation.m
+
+new objective file: objective_evaluation.m
+* Dependence: mexEMD, ws_distance
+
+new continuation file: continuation.m
+

@@ -2,7 +2,7 @@ clear all;
 close all;
 
 
-path(path,'../DataGenerator/Spiral_Wave/');
+path(path,'../Models/Spiral_Wave/');
 path(path,'Output_SpiralWave');
 
 
@@ -24,21 +24,21 @@ for i = 1:length(agrid)
         
         anew = num2str(agrid(i),'%1.6f');
         bnew = num2str(bgrid(j),'%1.6f');
-        fid = fopen('../DataGenerator/Spiral_Wave/Barkley/task.txt');
+        fid = fopen('../Models/Spiral_Wave/Barkley/task.txt');
         C=textscan(fid,'%s','delimiter','\n');
         fclose(fid);
         C{1}{1} = anew; C{1}{2} = bnew;
-        writecell(C{1},'../DataGenerator/Spiral_Wave/Barkley/task.txt','QuoteStrings',0)
+        writecell(C{1},'../Models/Spiral_Wave/Barkley/task.txt','QuoteStrings',0)
         if bgrid(j) > 0.05
             C{1}{11}(1:5) = num2str(50000);
         end
-        cd ../DataGenerator/Spiral_Wave/Barkley
+        cd ../Models/Spiral_Wave/Barkley
         system('rm tip.txt')
         system('touch tip.txt')
         system('./ezspiral')
 
         cd ../../../ReproduceFigures
-        tipping_pts{i,j} = readtable('../DataGenerator/Spiral_Wave/Barkley/tip.txt');
+        tipping_pts{i,j} = readtable('../Models/Spiral_Wave/Barkley/tip.txt');
         if size(tipping_pts{i,j})
             tipping_pts{i,j} = [tipping_pts{i,j}.Var2';tipping_pts{i,j}.Var3'];
             tipping_pts{i,j} = tipping_pts{i,j}(:,501:end);

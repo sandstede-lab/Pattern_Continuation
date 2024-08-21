@@ -1,0 +1,78 @@
+% Test finding initial points
+
+% test model
+
+clear all;
+close all;
+
+path(path,'..');
+
+feature_handle = @feature_evaluation;
+obj_handle = @objective_evaluation;
+
+modelpar = struct;
+modelpar.model = 'Brusselator';
+modelpar.init = 'random';
+modelpar.sets = 'pos';
+modelpar.xdim = 2;
+modelpar.threshold = 0.7;
+
+featpar = struct;
+featpar.feature = 'num';
+featpar.alpha = 1;
+
+
+contpar = struct;
+contpar.step_size = 0.5;
+contpar.max_step_arc_length = 0.5;
+contpar.min_step_arc_length = contpar.max_step_arc_length/2;
+contpar.L = 8;
+contpar.max_sim = 10;
+
+reproduce = 'pos';
+
+switch reproduce
+    case 'pos'
+        
+        modelpar.sets = 'pos';
+        modelpar.threshold = 0.7;
+        
+    case 'neg'
+
+        start.point = [4.2,6.5];
+        start.normal = [0,1];
+        modelpar.sets = 'neg';
+        modelpar.threshold = 0.3;
+
+    case 'steady'
+        start.point = [4.5,6.5];
+        start.normal = [0,1];
+        featpar.feature = 'steady';
+        contpar.max_sim = 1;
+        
+
+end
+
+line1 = struct; line1.start = [3,6.9]; line1.end = [6,6.9];
+line2 = struct; line2.start = [3,7]; line2.end = [6,7];
+num_search = 10;
+cd ..
+[search_1, dists_c1,dists_c2] = find_initial_condition(line1, arclength, num_search, modelpar, featpar,feature_handle, obj_handle);
+cd ReproduceCurves
+
+idx = find(dists_c2 == max(dists_c2));
+if length(idx)>1
+    idx = idx(1);
+end
+start.point = ( search_2(:,idx)' + search_2(:,idx+1)' )/2;
+
+idx = find(dists_c1 == max(dists_c1));
+if length(idx)>1
+    idx = idx(1);
+end
+start.normal = start.point - ( search_1(:,idx)' + search_1(:,idx+1)' )/2 ;
+% start.point = ( search_1(:,idx)' + search_1(:,idx+1)' )/2 ;
+
+cd ..
+[p_history,counts,L_history,p_history_all,metric_history_all] = continuation(contpar, featpar, modelpar, feature_handle, obj_handle, start )
+cd ReproduceCurves

@@ -1,7 +1,7 @@
 clear all;
 close all;
 
-path(path,'../DataGenerator/Spiral_Wave/');
+path(path,'../Models/Spiral_Wave/');
 path(path,'Output_SpiralWave');
 
 bgrid = linspace(0.04,0.24,2);
@@ -18,20 +18,20 @@ for i = 1:length(agrid)
         
         epnew = num2str(1/agrid(i),'%.6f');
         bnew = num2str(bgrid(j),'%1.6f');
-        fid = fopen('../DataGenerator/Spiral_Wave/Bar-Eiswirth/task.txt');
+        fid = fopen('../Models/Spiral_Wave/Bar-Eiswirth/task.txt');
         C=textscan(fid,'%s','delimiter','\n');
         fclose(fid);
         C{1}{3} = epnew; C{1}{2} = bnew;
-        writecell(C{1},'../DataGenerator/Spiral_Wave/Bar-Eiswirth/task.txt','QuoteStrings',0)
+        writecell(C{1},'../Models/Spiral_Wave/Bar-Eiswirth/task.txt','QuoteStrings',0)
         
-        cd ../DataGenerator/Spiral_Wave/Bar-Eiswirth
+        cd ../Models/Spiral_Wave/Bar-Eiswirth
         system('rm tip.txt')
         system('touch tip.txt')
         system('./ezspiral')
 
 
         cd ../../../ReproduceFigures
-        tipping_pts{i,j} = readtable('../DataGenerator/Spiral_Wave/Bar-Eiswirth/tip.txt');
+        tipping_pts{i,j} = readtable('../Models/Spiral_Wave/Bar-Eiswirth/tip.txt');
         if size(tipping_pts{i,j})
             tipping_pts{i,j} = [tipping_pts{i,j}.Var2';tipping_pts{i,j}.Var3'];
             tipping_pts{i,j} = tipping_pts{i,j}(:,501:end);

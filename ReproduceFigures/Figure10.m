@@ -1,7 +1,7 @@
 clear all;
 close all;
 
-path(path, '../DataGenerator/Reaction_Diffusion')
+path(path, '../Models/Reaction_Diffusion')
 path(path,'Output_Snaking');
 
 agrid = linspace(0.3,1.1,7);

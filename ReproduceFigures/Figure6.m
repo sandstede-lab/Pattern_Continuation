@@ -3,7 +3,7 @@ close all;
 
 % Reproduce the figures in paper (result+simulated patterns)
 
-path(path,'../DataGenerator/Reaction_Diffusion');
+path(path,'../Models/Reaction_Diffusion');
 path(path,'Output_ReactionDiffusion2D');
 
 
