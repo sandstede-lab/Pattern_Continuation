@@ -29,8 +29,17 @@ MATLAB
 git clone https://github.com/sandstede-lab/Pattern_Continuation.git
 ```
 
-## Organization of code
+## Structure of scripts
 
+The scripts are organized (tentatively) as the following:
+
+* ```model.m```: takes a struct ```modelpar``` as input, with all model settings as its attributes, and outputs a pattern, which is either (1) positive/negative sets for spot/stripe related applications, or (2) tip point trajectory for spiral wave related applications.
+
+* ```feature_evaluation.m```: takes two structs ```modelpar``` for evaluation of patterns, and ```featpar``` for mapping patterns to feature functions. The output is pattern statistics associated with the models.
+
+* ```objective_evaluation.m```: takes two sets of pattern statistics as inputs, and output the distance metric between them.
+
+* ```continuation.m```: this is the main function for continuation. It takes ```modelpar```, ```featpar```, and two function handles for feature evaluation and objective evaluation as inputs. In addition, it requries ```contpar```, which is a struct specifying details on running the continuation, and a starting point for the algorithm ```start```.
 
 ## Example usage in MATLAB
 
