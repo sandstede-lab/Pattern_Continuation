@@ -37,7 +37,7 @@ The scripts are organized (tentatively) as the following:
 
 * ```feature_evaluation.m```: takes two structs ```modelpar``` for evaluation of patterns, and ```featpar``` for mapping patterns to feature functions. The output is pattern statistics associated with the models.
 
-* ```objective_evaluation.m```: takes two sets of pattern statistics as inputs, and output the distance metric between them.
+* ```objective_evaluation.m```: takes two sets of pattern statistics as inputs, and output the distance metric between them, depending on the data type of inputs. Note that this function has dependency on ```ws_distance.m``` and ```medEMD/``` for evaluating Wasserstein distance.
 
 * ```continuation.m```: this is the main function for continuation. It takes ```modelpar```, ```featpar```, and two function handles for feature evaluation and objective evaluation as inputs. In addition, it requries ```contpar```, which is a struct specifying details on running the continuation, and a starting point for the algorithm ```start```.
 
