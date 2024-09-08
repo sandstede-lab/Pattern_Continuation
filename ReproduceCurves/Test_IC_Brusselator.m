@@ -29,7 +29,7 @@ contpar.min_step_arc_length = contpar.max_step_arc_length/2;
 contpar.L = 8;
 contpar.max_sim = 10;
 
-reproduce = 'pos';
+reproduce = 'neg';
 
 switch reproduce
     case 'pos'
@@ -37,7 +37,7 @@ switch reproduce
         modelpar.sets = 'pos';
         modelpar.threshold = 0.7;
         contpar.stopping = 10;
-        
+        featpar.avoid_steady = 1;
     case 'neg'
 
         start.point = [4.2,6.5];
@@ -45,20 +45,20 @@ switch reproduce
         modelpar.sets = 'neg';
         modelpar.threshold = 0.3;
         contpar.stopping = 10;
-        
+        featpar.avoid_steady = 1;
 
     case 'steady'
         start.point = [4.5,6.5];
         start.normal = [0,1];
         featpar.feature = 'steady';
         contpar.max_sim = 1;
-        contpar.stopping = 1;
-        
+        contpar.stopping = .1;
+        featpar.avoid_steady = 0;
 
 end
 
 line = struct; line.start = [3,7]; line.end = [6,7];
-
+featpar.N = 3;
 angle = struct; angle.start = 0; angle.end = pi*9/10;
 %num_search = 10;
 cd ..

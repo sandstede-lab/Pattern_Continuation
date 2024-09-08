@@ -74,9 +74,10 @@ arguments
    Du double = 2*10^(-5);
    Dv double = 10^(-5);
    viz double = 0
-   options.GridSize int64 = 200
-   options.InitState char = 'random'
-   options.NumIterations int64 = 10000
+   options.GridSize int64 = 256%200
+   % options.InitState char = 'random'
+   options.InitState char = 'square'
+   options.NumIterations int64 = 2*10000
    options.FrameSpacing int64 = 20
    options.dt double = 1
    options.Colormap char = 'default'%'jet'
@@ -91,8 +92,11 @@ options.dx = 2.5/200;
 u = ones(options.GridSize);
 v = zeros(options.GridSize);
 if (strcmp(options.InitState,'square')) % Square initial state
-    u(options.GridSize/2-5:options.GridSize/2+5,options.GridSize/2-5:options.GridSize/2+5) = 0;
-    v(options.GridSize/2-5:options.GridSize/2+5,options.GridSize/2-5:options.GridSize/2+5) = 1;
+    % u(options.GridSize/2-5:options.GridSize/2+5,options.GridSize/2-5:options.GridSize/2+5) = 0;
+    % v(options.GridSize/2-5:options.GridSize/2+5,options.GridSize/2-5:options.GridSize/2+5) = 1;
+    u(options.GridSize/2-10:options.GridSize/2+10,options.GridSize/2-10:options.GridSize/2+10) = 0.5;
+    v(options.GridSize/2-10:options.GridSize/2+10,options.GridSize/2-10:options.GridSize/2+10) = 0.25;
+    u = u + 0.02*(rand(options.GridSize)-0.5 );
 elseif (strcmp(options.InitState,'wavefront')) % Wavefront initial state
     u(options.GridSize/2-30:options.GridSize/2+30,options.GridSize/2-6:options.GridSize/2-4) = 0.75;
     u(options.GridSize/2-30:options.GridSize/2+30,options.GridSize/2-3:options.GridSize/2-1) = 0.5;
@@ -155,8 +159,8 @@ end
 % close(writer); % Close videoWriter
 % fprintf('Done!\n'); % Notify user when recording is complete
 
-x = linspace(0,2.5,200);
-y = linspace(0,2.5,200);
+x = linspace(0,2.5,options.GridSize);
+y = linspace(0,2.5,options.GridSize);
 [x,y] = meshgrid( x, y);
 x = x(:); y = y(:);
 

@@ -2,6 +2,7 @@ function pattern = model(modelpar)
 
 path(path,'Models/Reaction_Diffusion/');
 path(path,'Models/Spiral_Wave/');
+path(path,'Models/');
 
 % Generate solution
 switch modelpar.model
@@ -13,10 +14,15 @@ switch modelpar.model
     case 'SH_1D'
         [U,X]= SH_1D(modelpar.a,modelpar.b);
     case 'GS'
-        [U,X,Y]= Gray_Scott(modelpar.a,modelpar.b);
+        [U,V,X,Y]= Gray_Scott(modelpar.a,modelpar.b);
     case 'Schnakenberg'
         [U,X,Y]= Schnakenberg(modelpar.a,modelpar.b);
-
+    case 'Bullara'
+        [U,X,Y] = bullara_code(modelpar.a,modelpar.b,100, 5e7, 0, 0);
+        idx0 = U == 0;
+        idx1 = U == 1;
+        U(idx0) = 1;
+        U(idx1) = 0;
     case 'Barkley'
         anew = num2str(modelpar.a,'%1.6f');
         bnew = num2str(modelpar.b,'%1.6f');
@@ -139,7 +145,7 @@ end
 % Select set
 switch modelpar.sets
     case 'pos'
-        if max(U(:)) - min(U(:)) < 1E-2
+        if max(U(:)) - min(U(:)) < 1E-5
             X = []; Y = [];
         else
             X = X(U > min(U(:)) + modelpar.threshold*( max(U(:))-min(U(:))) );%  quantile(U(:), 0.7) );
@@ -148,7 +154,7 @@ switch modelpar.sets
             end
         end
     case 'neg'
-        if max(U(:)) - min(U(:)) < 1E-2
+        if max(U(:)) - min(U(:)) < 1E-5
             X = []; Y = [];
         else
             X = X(U < min(U(:)) + modelpar.threshold*( max(U(:))-min(U(:))) );%  < quantile(U(:), 0.3));
@@ -164,10 +170,52 @@ switch modelpar.sets
     %         X = [];
     %         Y = [];
     %     end
+    case 'pos-filter'
+        % This is for fish
+        if max(U(:)) - min(U(:)) < 1E-5
+            X = []; Y = [];
+        else
+            X = X(U > min(U(:)) + modelpar.threshold*( max(U(:))-min(U(:))) );%  quantile(U(:), 0.7) );
+            if modelpar.xdim == 2 
+                Y = Y(U > min(U(:)) + modelpar.threshold*( max(U(:))-min(U(:))) );%  quantile(U(:), 0.7));
+            end
+        end
+        pattern = [X,Y];
+        Dists = sqrt( (X-X').^2 + (Y - Y').^2 );
+        Dists_nn = zeros(1, size(X,1));
+        for i = 1:length(Dists_nn)
+            Dists(i,:) = sort( Dists(i,:) );
+            Dists_nn(i) = sum(Dists(i,2:11).^2/10);
+        end
+        idx = Dists_nn < quantile(Dists_nn,0.9);
+        X = X(idx);
+        Y = Y(idx);
+    case 'neg-filter'
+        if max(U(:)) - min(U(:)) < 1E-5
+            X = []; Y = [];
+        else
+            X = X(U < min(U(:)) + modelpar.threshold*( max(U(:))-min(U(:))) );%  < quantile(U(:), 0.3));
+            if modelpar.xdim == 2 
+                Y = Y(U < min(U(:)) + modelpar.threshold*( max(U(:))-min(U(:))) );%  < quantile(U(:), 0.3));
+            end
+        end
+        pattern = [X,Y];
+        Dists = sqrt( (X-X').^2 + (Y - Y').^2 );
+        Dists_nn = zeros(1, size(X,1));
+        for i = 1:length(Dists_nn)
+            Dists(i,:) = sort( Dists(i,:) );
+            Dists_nn(i) = sum(Dists(i,2:11).^2/10);
+        end
+        idx = Dists_nn < quantile(Dists_nn,0.9);
+        X = X(idx);
+        Y = Y(idx);
 end
 
 if strcmp( modelpar.sets, 'tip_points')
     pattern = tip_pts;
+elseif strcmp( modelpar.sets, 'homogeneous')
+    pattern = max(U(:))-min(U(:)) <= 1E-10
+
 else
     if modelpar.xdim == 2 
         pattern = [X,Y];
@@ -176,13 +224,13 @@ else
     end
 end
 
-if ~isempty(pattern)
-    if strcmp( modelpar.sets, 'tip_points')
-        figure(29);plot(pattern(:,2),pattern(:,3))
-    else
-        figure(29);scatter(pattern(:,1),pattern(:,2))
-    end
-end
+% if size(pattern,1) > 1
+%     if strcmp( modelpar.sets, 'tip_points')
+%         figure(29);plot(pattern(:,2),pattern(:,3))
+%     else
+%         figure(29);scatter(pattern(:,1),pattern(:,2))
+%     end
+% end
 
 
 

@@ -1,13 +1,16 @@
 function features = feature_evaluation(featpar, modelpar)
 
 % simulate the patterns to be used for statistics
+% featpar.N = 1;
+
 pattern = cell(1,featpar.N);
-parfor i = 1:featpar.N
+for i = 1:featpar.N
     pattern{i} = model(modelpar);
+    
 end
 
 switch featpar.feature
-    case {'num','roundness-bag','steady','retract','meander','drift','turbulence','area'}
+    case {'num','roundness-bag','steady','retract','meander','drift','turbulence','area','num-spots'}
         features = [];
     otherwise
         features = cell(1,featpar.N);
@@ -24,6 +27,10 @@ for i = 1:featpar.N
         
         end
 
+    elseif strcmp( modelpar.sets, 'homogeneous' )
+        if pattern{i} == 0
+            pattern{i} = [];
+        end
     else
 
         if ~isempty(pattern{i})
@@ -34,7 +41,9 @@ for i = 1:featpar.N
             Y = pattern{i}(:,2);
         
             shp = alphaShape(X,Y,featpar.alpha);
-        
+            %figure(27);
+            %plot(shp)
+            pause(0.01)
         end
     end
     
@@ -64,14 +73,35 @@ for i = 1:featpar.N
             if ~isempty(pattern{i})
     
                 areas = area(shp, 1:numRegions(shp));
-                perimeters = perimeter(shp, 1:numRegions(shp));   
+                perimeters = perimeter(shp, 1:numRegions(shp));  
+                
                 features = [features, 4*pi*areas./(perimeters.^2)];
+                if numRegions(shp) == 1
+                    features = [features,4*pi*areas./(perimeters.^2)];
+                end
+            else 
+                features = [features, 0,0];
+            
             end
+            
         case 'roundness'
             if ~isempty(pattern{i})
                 areas = area(shp, 1:numRegions(shp));
                 perimeters = perimeter(shp, 1:numRegions(shp)); 
                 features{i} = 4*pi*areas./(perimeters.^2);
+            end
+        case 'num-spots'
+            if ~isempty(pattern{i})
+    
+                areas = area(shp, 1:numRegions(shp));
+                perimeters = perimeter(shp, 1:numRegions(shp));  
+                
+                roundness = 4*pi*areas./(perimeters.^2);
+                features = [features,sum( roundness>0.5 )];
+                
+            else 
+                features = [features, 0];
+            
             end
 
         
@@ -93,9 +123,9 @@ for i = 1:featpar.N
 %                         
                 features = [features, tanh(4*shp_rdns)];
                 
-                figure(11);
-                plot(shp_pos)
-                title( features )
+                %figure(11);
+                %plot(shp_pos)
+                %title( features )
             end
 
         case 'drift'

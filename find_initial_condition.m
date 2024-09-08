@@ -20,7 +20,7 @@ path(path,'../Models/Spiral_Wave');
     
 
 
-featpar.N = 1;
+% featpar.N = 1;
 
 p_left = line.start;
 p_right = line.end;
@@ -42,8 +42,10 @@ end
 search_1 = [];
 dists_c1 = [];
 
+
+
 % First do a bisection to find the starting point
-while norm(p_right - p_left) > arclength
+while norm(p_right - p_left) >= .1*arclength
     p_mid = 0.5*( p_left + p_right );
     modelpar.a = p_mid(1);
     modelpar.b = p_mid(2);
@@ -58,6 +60,7 @@ while norm(p_right - p_left) > arclength
     obj_r = obj_handle(featuresm,featuresr);
     search_1 = [search_1, 0.5*(p_right + p_mid)'  ];
     dists_c1 = [dists_c1, obj_r/norm(p_right-p_mid)];
+    
 
     if obj_l > obj_r
         p_right = p_mid;
@@ -71,54 +74,73 @@ while norm(p_right - p_left) > arclength
 
 end
 
-
+start.point = p_mid;
 
 % Then search for the optimal direction
 
-num_search = 10;
-angles = linspace(angle.start,angle.end,num_search);
 
-start = struct;
-start.point = ( p_left + p_right )/2;
+% angles = linspace(angle.start,angle.end,num_search);
+angle_left = angle.start;
+angle_right = angle.end;
 
-featuresl = cell(1, num_search);
-featuresr = cell(1, num_search);
+modelpar.a = start.point(1) + arclength*cos(angle_left);
+modelpar.b = start.point(2) + arclength*sin(angle_left);
+featuresl = feature_handle(featpar, modelpar);
+if iscell(featuresl)
+    featuresl = featuresl{1};
+end
 
-% Record result of dists on search 1
-for counter = 0:num_search-1
-    next = start.point + arclength*[cos(angles(counter+1)),sin(angles(counter+1))  ];
-    normal = [sin(angles(counter+1)), -cos(angles(counter+1))];
+modelpar.a = start.point(1) + arclength*cos(angle_right);
+modelpar.b = start.point(2) + arclength*sin(angle_right);
+featuresr = feature_handle(featpar, modelpar);
+if iscell(featuresr)
+    featuresr = featuresr{1};
+end
 
-    modelpar.a = next(1) + .5*arclength*normal(1);
-    modelpar.b = next(2) + .5*arclength*normal(2);
-    featuresl{counter+1} = feature_handle(featpar, modelpar);
-    if iscell(featuresl{counter+1})
-        featuresl{counter+1} = featuresl{counter+1}{1};
+search_2 = [];
+dists_c2 = [];
+
+
+
+while norm(angle_right - angle_left) >= pi/8
+
+    angle_mid = 0.5*( angle_left + angle_right );
+    modelpar.a = start.point(1) + arclength*cos(angle_mid);
+    modelpar.b = start.point(2) + arclength*sin(angle_mid);
+    featuresm = feature_handle(featpar, modelpar);
+    if iscell(featuresm)
+        featuresm = featuresm{1};
     end
+    obj_l = obj_handle(featuresm,featuresl);
+    search_2 = [search_2, start.point'+arclength*[cos(0.5*(angle_left + angle_mid)');sin(0.5*(angle_left + angle_mid))]  ];
+    dists_c2 = [dists_c2, obj_l];
 
+    obj_r = obj_handle(featuresm,featuresr);
+    search_2 = [search_2, start.point'+arclength*[cos(0.5*(angle_right + angle_mid)');sin(0.5*(angle_right + angle_mid))]  ];
+    dists_c2 = [dists_c2, obj_r];
 
-    modelpar.a = next(1) - .5*arclength*normal(1);
-    modelpar.b = next(2) - .5*arclength*normal(2);
-    featuresr{counter+1} = feature_handle(featpar, modelpar);
-    if iscell(featuresl{counter+1})
-        featuresr{counter+1} = featuresr{counter+1}{1};
+    
+    if obj_l > obj_r
+        angle_right = angle_mid;
+        featuresr = featuresm;
+    else
+        angle_left = angle_mid;
+        featuresl = featuresm;
     end
-    dists_c2(counter+1) = obj_handle(featuresl{counter+1},featuresr{counter+1})/norm(arclength*normal);
-
 
 
 
 end
 
-idx = find(dists_c2 == max(dists_c2)); %idx = idx( round(length(idx)/2));
-start.normal = [cos(mean(angles(idx))), sin(mean(angles(idx)))];
-
+angle_mid = 0.5*( angle_left + angle_right );
+%idx = find(dists_c2 == max(dists_c2)); %idx = idx( round(length(idx)/2));
+start.normal = [cos(angle_mid),sin(angle_mid)];
     
 
 figure(19);
 scatter( search_1(1,:), search_1(2,:), [], dists_c1 , 'filled' )
 hold on,
-scatter( start.point(1)+cos(angles)*arclength, start.point(2)+sin(angles)*arclength, [], dists_c2 , 'filled'  )
+scatter( search_2(1,:), search_2(2,:), [], dists_c2 , 'filled'  )
         
 
 switch modelpar.model
@@ -135,16 +157,20 @@ switch modelpar.model
         ylabel('\nu')
 
     case 'GS'
-        xlim([0.05,0.065])
-        ylim([0.023,0.038])
-        ylabel('F')
+        xlim([0.035,0.065])
+        ylim([0.005,0.06])
+        ylabel('f')
         xlabel('k')
-
 
     case 'Schnakenberg'
         xlim([4.5,7.5]);
         ylim([4.5,6.5]);
         xlabel('a')
         ylabel('b')
+    case 'Bullara'
+        xlim([0,4])
+        ylim([0,20])
+        xlabel('l_x')
+        ylabel('h')
 end
 set(gca,'fontsize',24);

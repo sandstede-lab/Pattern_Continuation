@@ -45,6 +45,7 @@ switch reproduce
         line = struct; line.start = [0.2,0.02]; line.end = [0.4,0.02];
         contpar.stopping = 0.9;
         modelpar.sets = 'pos';
+        featpar.avoid_steady = 0;
     case 'meander1'
         start.point = [0.40,0.02];%+0.02;
         start.normal = [0.01,0.01];
@@ -52,7 +53,7 @@ switch reproduce
         modelpar.sets = 'tip_points';
         line = struct; line.start = [0.3,0.02]; line.end = [0.6,0.02];
         contpar.stopping = 0.5;
-
+        featpar.avoid_steady = 1;
     case 'meander2'
         start.point = [0.66,0.01];%+0.02;
         start.normal = [0.01,0.01];
@@ -60,7 +61,7 @@ switch reproduce
         modelpar.sets = 'tip_points';
         line = struct; line.start = [0.6,0.02]; line.end = [0.8,0.02];
         contpar.stopping = 0.5;
-
+        featpar.avoid_steady = 1;
     case 'drift'
         start.point = [0.45,0.005];
         start.normal = [0.01,0.01];
@@ -71,7 +72,7 @@ switch reproduce
         featpar.feature = 'drift';
         modelpar.sets = 'tip_points';
         line = struct; line.start = [0.42,0.02]; line.end = [0.6,0.02];
-
+        featpar.avoid_steady = 1;
 
 
 
